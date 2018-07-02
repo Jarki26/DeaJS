@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="graph" width="500" height="500"></canvas>
+    <script src = "graph.js"></script>
+    <script>
+        function get_textnode(){
+            return document.getElementById('text').value;
+        }
+        
+        function set_textnode(input){
+            document.getElementById('text').value = input;
+        }
+        
+        function clear_textnode(){
+            set_textnode("");
+        }
+
+        function get_textvalue(){
+            return document.getElementById('textValue').value;
+        }
+        
+        function set_textvalue(input){
+            document.getElementById('textValue').value = input;
+        }
+        
+        function clear_textvalue(){
+            set_textvalue("");
+        }
+    </script>
+    <br />
+    <input id=text>
+    <button onclick="var text=get_textnode();add_node(text);clear_textnode();update_graph();">Add Node</button>
+    <button onclick="var text=get_textnode();del_node(text);clear_textnode();update_graph();">Delete Node</button>
+    <button onclick="update_graph()">Update</button>
+    <button onclick="del_nodes();update_graph();">Clear</button>
+    <br />
+    <select id="selec1"></select>
+    <select id="selec2"></select>
+    <input id=textValue>
+    <button onclick="var nodeA=document.getElementById('selec1').value;var nodeB=document.getElementById('selec2').value;add_arc(nodeA,nodeB,get_textvalue());clear_textvalue();draw_arc(nodeA,nodeB);">Add relation</button>
+</body>
+</html>
