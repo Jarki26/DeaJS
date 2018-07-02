@@ -4,24 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>DuesApp</title>
 </head>
 <body>
     <canvas id="graph" width="500" height="500"></canvas>
     <script src = "graph.js"></script>
     <script>
+        // Node text functions
         function get_textnode(){
-            return document.getElementById('text').value;
+            return document.getElementById('node_text').value;
         }
         
         function set_textnode(input){
-            document.getElementById('text').value = input;
+            document.getElementById('node_text').value = input;
         }
         
         function clear_textnode(){
             set_textnode("");
         }
-
+        
+        // Value text functions
         function get_textvalue(){
             return document.getElementById('textValue').value;
         }
@@ -33,17 +36,55 @@
         function clear_textvalue(){
             set_textvalue("");
         }
+        
+        // UI functions
+        function addNode_onclick(){
+            var text=get_textnode();
+            add_node(text);
+            clear_textnode();
+            update_graph();
+        }
+
+        function deleteNode_onclick(){
+            var text=get_textnode();
+            del_node(text);
+            clear_textnode();
+            update_graph();
+        }
+
+        function update_onclick(){
+            update_graph();
+        }
+
+        function clear_onclick(){
+            del_nodes();
+            update_graph();
+        }
+
+        function addRel_onclick(){
+            var nodeA = document.getElementById('selec1').value;
+            var nodeB = document.getElementById('selec2').value;
+            add_arc(nodeA, nodeB, get_textvalue());
+            clear_textvalue();
+            //draw_arc(nodeA, nodeB);
+            update_graph();
+        }
     </script>
     <br />
-    <input id=text>
-    <button onclick="var text=get_textnode();add_node(text);clear_textnode();update_graph();">Add Node</button>
-    <button onclick="var text=get_textnode();del_node(text);clear_textnode();update_graph();">Delete Node</button>
-    <button onclick="update_graph()">Update</button>
-    <button onclick="del_nodes();update_graph();">Clear</button>
+    
+    <label>Name: </label>
+    <input id=node_text>
+    <label>Wallet: </label>
+    <input id=wallet_text>
+    <button onclick="addNode_onclick()">Add Node</button>
+    <button onclick="deleteNode_onclick()">Delete Node</button>
+    <button onclick="update_onclick()">Update</button>
+    <button onclick="clear_onclick()">Clear</button>
+    
     <br />
     <select id="selec1"></select>
     <select id="selec2"></select>
     <input id=textValue>
-    <button onclick="var nodeA=document.getElementById('selec1').value;var nodeB=document.getElementById('selec2').value;add_arc(nodeA,nodeB,get_textvalue());clear_textvalue();draw_arc(nodeA,nodeB);">Add relation</button>
+    <button onclick="addRel_onclick()">Add relation</button>
 </body>
 </html>

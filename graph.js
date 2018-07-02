@@ -78,10 +78,16 @@ function draw_node(name="", x=0, y=0){
 function calc_pos(i, n){
     var x = 0;
     var y = 0;
+    var rad = 70*n/Math.PI;
     if(n>1){
         var delta = 2*Math.PI/n;
-        x = Math.round(Math.cos(i*delta) * 100);
-        y = Math.round(Math.sin(i*delta) * 100);
+        if(i<n/2){
+            x = Math.round(Math.cos(i*delta) * rad);
+            y = Math.round(Math.sin(i*delta) * rad);
+        }else{
+            x = Math.round(Math.cos(i*delta) * 1.2*rad);
+            y = Math.round(Math.sin(i*delta) * 1.2*rad);
+        }
     }
     return {"x":x, "y":y};
 }
