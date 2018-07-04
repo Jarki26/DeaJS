@@ -15,24 +15,37 @@
         function get_textnode(){
             return document.getElementById('node_text').value;
         }
-        
         function set_textnode(input){
             document.getElementById('node_text').value = input;
         }
-        
         function clear_textnode(){
             set_textnode("");
+        }
+
+        // Wallet text functions
+        function get_textwallet(){
+            if(document.getElementById('wallet_text').value == ""){
+                return "0";
+            }
+            return document.getElementById('wallet_text').value;
+        }
+        function set_textwallet(input){
+            document.getElementById('wallet_text').value = input;
+        }
+        function clear_textwallet(){
+            set_textwallet("");
         }
         
         // Value text functions
         function get_textvalue(){
+            if(document.getElementById('textValue').value == ""){
+                return "0";
+            }
             return document.getElementById('textValue').value;
         }
-        
         function set_textvalue(input){
             document.getElementById('textValue').value = input;
         }
-        
         function clear_textvalue(){
             set_textvalue("");
         }
@@ -40,27 +53,25 @@
         // UI functions
         function addNode_onclick(){
             var text=get_textnode();
-            add_node(text);
+            var wallet = get_textwallet();
+            add_node(text, wallet);
             clear_textnode();
+            clear_textwallet();
             update_graph();
         }
-
         function deleteNode_onclick(){
             var text=get_textnode();
             del_node(text);
             clear_textnode();
             update_graph();
         }
-
         function update_onclick(){
             update_graph();
         }
-
         function clear_onclick(){
             del_nodes();
             update_graph();
         }
-
         function addRel_onclick(){
             var nodeA = document.getElementById('selec1').value;
             var nodeB = document.getElementById('selec2').value;
@@ -70,8 +81,8 @@
             update_graph();
         }
     </script>
+
     <br />
-    
     <label>Name: </label>
     <input id=node_text>
     <label>Wallet: </label>

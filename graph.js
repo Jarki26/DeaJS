@@ -10,11 +10,11 @@ var arcs = {};
 
 ctx.translate(WINDOW_WIDTH/2, WINDOW_HEIGHT/2);
 clear();
-
-function add_node(name="", x=0, y=0){
+// Node functions
+function add_node(name="", wallet=0, x=0, y=0){
     // Check if node exists
     if(Object.keys(nodes).indexOf(name) == -1){
-        nodes[name] = {"x":x, "y":y, "arcs":[]};
+        nodes[name] = {"x":x, "y":y, "wallet":wallet, "arcs":[]};
         var option1 = document.createElement("option");
         option1.text = name;
         var option2 = document.createElement("option");
@@ -69,6 +69,11 @@ function draw_node(name="", x=0, y=0){
     var yText = y + 2.5;
     ctx.fillText(name, xText, yText);
     
+    // Node wallet
+    var wallet = nodes[name].wallet.toString();
+    xText = x - 10 * wallet.length/4;
+    ctx.fillText(wallet, xText, yText+20);
+
     // Node shape
     ctx.beginPath();
     ctx.arc(x,y,NODE_R,0,2*Math.PI);
@@ -113,6 +118,7 @@ function decomp_key(node, key){
     }
 }
 
+// Arcs functions
 function add_arc(nodeA, nodeB, value){
     var key = gen_arc_key(nodeA, nodeB);
     arcs[key] = value;
@@ -139,7 +145,10 @@ function draw_arc(nodeA, nodeB){
         return null;
     }
     var key = gen_arc_key(nodeA, nodeB);
+    if(arcs[key] == undefined){return null;}
     var value = arcs[key].toString();
+    // console.log("key:",key);
+    // console.log("value:",value);
 
     // Draw line
     ctx.beginPath();
@@ -148,15 +157,12 @@ function draw_arc(nodeA, nodeB){
     ctx.stroke();
 
     var vec = {};
-    var vecN = {};
     vec.x = posB.x - posA.x;
     vec.y = posB.y - posA.y;
     round_vec(vec);
+    // console.log("vec:",vec);
     vecMod = Math.round(Math.sqrt(Math.pow(vec.x,2) + Math.pow(vec.y,2)));
     var vecnorm = Math.max(Math.abs(vec.x), Math.abs(vec.y));
-    vecN.x = vec.x/vecnorm;
-    vecN.y = vec.y/vecnorm;
-    round_vec(vecN);
     
     // Draw triangle
     ctx.save();
@@ -164,15 +170,12 @@ function draw_arc(nodeA, nodeB){
     // Arc value
     var xText = -10 * value.length/4;
     var yText = 20;
-    //ctx.fillStyle = "#FFFFFF";
-    //ctx.fillRect(-xText, yText, xText*2, -yText);
     ctx.fillStyle = "#000000";
-    //ctx.strokeRect(-xText, yText, xText*2, -yText);
     ctx.fillText(value, xText, yText);
 
-    ctx.rotate(Math.atan(vecN.y/vecN.x));
+    ctx.rotate(Math.atan(vec.y/vec.x));
     //if(vec.x<0 || (vec.x==0 && vec.y<0)){ctx.rotate(Math.PI); }
-    if(vecN.x<0){ctx.rotate(Math.PI); }
+    if(vec.x*vec.y<0){ctx.rotate(Math.PI); }
     ctx.beginPath();
     ctx.moveTo(5,0);
     ctx.lineTo(-5,10);
@@ -204,6 +207,7 @@ function round_vec(vec){
     return vec;
 }
 
+// Graph functions
 function nodes_graph(){
     var n = Object.keys(nodes).length;
     Object.keys(nodes).forEach((element,i) => {
