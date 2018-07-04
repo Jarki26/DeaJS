@@ -54,14 +54,15 @@
         function addNode_onclick(){
             var text=get_textnode();
             var wallet = get_textwallet();
-            add_node(text, wallet);
+            var node = new Node(text, wallet)
+            nodes.add(node);
             clear_textnode();
             clear_textwallet();
             update_graph();
         }
         function deleteNode_onclick(){
-            var text=get_textnode();
-            del_node(text);
+            var text = get_textnode();
+            nodes.delete(text);
             clear_textnode();
             update_graph();
         }
@@ -69,13 +70,16 @@
             update_graph();
         }
         function clear_onclick(){
-            del_nodes();
+            nodes.delete_all();
             update_graph();
         }
         function addRel_onclick(){
-            var nodeA = document.getElementById('selec1').value;
-            var nodeB = document.getElementById('selec2').value;
-            add_arc(nodeA, nodeB, get_textvalue());
+            var nameA = document.getElementById('selec1').value;
+            var nameB = document.getElementById('selec2').value;
+            var nodeA = nodes.get(nameA);
+            var nodeB = nodes.get(nameB);
+            var arc = new Arc(nodeA, nodeB, get_textvalue());
+            arcs.add(arc);
             clear_textvalue();
             //draw_arc(nodeA, nodeB);
             update_graph();
