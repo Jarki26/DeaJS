@@ -4,11 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- jQuery library -->
+    <script src="jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="bootstrap.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>DuesApp</title>
 </head>
 <body>
-    <canvas id="graph" width="500" height="500"></canvas>
+    <div class="row">
+        <div class="col-sm-0 col-lg-2 ">
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
+        </div>
+        <div id="cont" class="col-sm-12 col-lg-8 ">
+            <canvas id="graph" height="200px"></canvas>
+        </div>
+        <div class="col-sm-0 col-lg-2 "></div>
+
+        <!-- Modal -->
+        <div id="myModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+            
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Tools</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="box">
+                                <label>Name: </label>
+                                <input id=node_text>
+                                <label>Wallet: </label>
+                                <input id=wallet_text>
+                                <button onclick="addNode_onclick()">Add Node</button>
+                                <button onclick="deleteNode_onclick()">Delete Node</button>
+                                <button onclick="update_onclick()">Update</button>
+                                <button onclick="clear_onclick()">Clear</button>
+                            </div>
+                            
+                            <br />
+                            <div class="box">
+                                <label>Relations: </label>
+                                <select id="selec1"></select>
+                                <select id="selec2"></select>
+                                <input id=textValue>
+                                <button onclick="addRel_onclick()">Add relation</button>
+                                <button onclick="delRel_onclick()">Delete relation</button>
+                                <button onclick="resRel_onclick()">Reset</button>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            
+                </div>
+            </div>
+
+    </div>
     <script src = "graph.js"></script>
     <script>
         // Node text functions
@@ -81,25 +137,22 @@
             var arc = new Arc(nodeA, nodeB, get_textvalue());
             arcs.add(arc);
             clear_textvalue();
-            //draw_arc(nodeA, nodeB);
+            update_graph();
+        }
+        function delRel_onclick(){
+            var nameA = document.getElementById('selec1').value;
+            var nameB = document.getElementById('selec2').value;
+            var key = gen_arc_key(nameA, nameB);
+            arcs.delete(key);
+            clear_textvalue();
+            update_graph();
+        }
+        function resRel_onclick(){
+            arcs.delete_all();
+            clear_textvalue();
             update_graph();
         }
     </script>
 
-    <br />
-    <label>Name: </label>
-    <input id=node_text>
-    <label>Wallet: </label>
-    <input id=wallet_text>
-    <button onclick="addNode_onclick()">Add Node</button>
-    <button onclick="deleteNode_onclick()">Delete Node</button>
-    <button onclick="update_onclick()">Update</button>
-    <button onclick="clear_onclick()">Clear</button>
-    
-    <br />
-    <select id="selec1"></select>
-    <select id="selec2"></select>
-    <input id=textValue>
-    <button onclick="addRel_onclick()">Add relation</button>
 </body>
 </html>

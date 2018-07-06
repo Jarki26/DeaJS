@@ -192,16 +192,24 @@ function ArcsCollection(){
 
     this.add = function(arc){
         var key = gen_arc_key(arc.nodeA.name, arc.nodeB.name);
+        if(this.content[key] != undefined){
+            this.delete(key);
+        }
         this.content[key] = arc;
+        arc.nodeA.wallet -= arc.value;
+        arc.nodeB.wallet += arc.value;
     }
 
     this.delete = function(key){
+        var arc = arcs.get(key);
+        arc.nodeA.wallet += arc.value;
+        arc.nodeB.wallet -= arc.value;
         delete this.content[key];
     }
 
     this.delete_all = function(){
-        for(element in this.content){
-            delete this.content[element];
+        for(key in this.content){
+            this.delete(key);
         }
     }
 }

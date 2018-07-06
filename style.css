@@ -1,3 +1,16 @@
 input {
     width: 75px;
 }
+canvas {
+    width: -moz-available;
+    width: -webkit-fill-available;
+    height: -moz-available;
+    height: -webkit-fill-available;
+}
+div.box {
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.507);
+    border-radius: 10px;
+    padding: 5px;
+}
