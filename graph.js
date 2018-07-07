@@ -2,15 +2,21 @@ var canvas = document.getElementById("graph");
 var ctx = canvas.getContext("2d");
 
 const NODE_R = 30;
-const WINDOW_WIDTH = canvas.width;
-const WINDOW_HEIGHT = canvas.height;
 
+var windowWidth = getWidth();
+var windowHeight = getHeight();
 var nodes = new NodeCollection();
 var arcs = new ArcsCollection();
 
-ctx.translate(WINDOW_WIDTH/2, WINDOW_HEIGHT/2);
+ctx.translate(windowWidth/2, windowHeight/2);
 clear_graph();
 
+function getWidth() {
+    return $(window)[0].innerWidth;
+}
+function getHeight() {
+    return $(window)[0].innerHeight;
+}
 // Node functions
 function Node(name="", wallet=0, x=0, y=0){
     this.name = name;
@@ -56,12 +62,21 @@ function NodeCollection(){
         // Check if node exists
         if(Object.keys(this.content).indexOf(node.name) == -1){
             this.content[node.name] = node;
-            var option1 = document.createElement("option");
-            var option2 = document.createElement("option");
-            option1.text = node.name;
-            option2.text = node.name;
-            document.getElementById("selec1").add(option1);
-            document.getElementById("selec2").add(option2);
+            var addarcoption1 = document.createElement("option");
+            var addarcoption2 = document.createElement("option");
+            var deloption = document.createElement("option");
+            var delarcoption1 = document.createElement("option");
+            var delarcoption2 = document.createElement("option");
+            addarcoption1.text = node.name;
+            addarcoption2.text = node.name;
+            deloption.text = node.name;
+            delarcoption1.text = node.name;
+            delarcoption2.text = node.name;
+            document.getElementById("addrelselec1").add(addarcoption1);
+            document.getElementById("addrelselec2").add(addarcoption2);
+            document.getElementById("delselec").add(deloption);
+            document.getElementById("delarcselec1").add(delarcoption1);
+            document.getElementById("delarcselec2").add(delarcoption2);
             console.log("Node \"",node.name,"\" created");
         }
         else{
@@ -77,8 +92,11 @@ function NodeCollection(){
             }
         }
         delete this.content[name];
-        del_opt("selec1", name);
-        del_opt("selec2", name);
+        del_opt("addrelselec1", name);
+        del_opt("addrelselec2", name);
+        del_opt("delselec", name);
+        del_opt("delarcselec1", name);
+        del_opt("delarcselec2", name);
     };
 
     this.delete_all = function(){
@@ -202,9 +220,11 @@ function ArcsCollection(){
 
     this.delete = function(key){
         var arc = arcs.get(key);
-        arc.nodeA.wallet += arc.value;
-        arc.nodeB.wallet -= arc.value;
-        delete this.content[key];
+        if(arc != undefined){
+            arc.nodeA.wallet += arc.value;
+            arc.nodeB.wallet -= arc.value;
+            delete this.content[key];
+        }
     }
 
     this.delete_all = function(){
@@ -260,7 +280,21 @@ function update_graph(){
 function clear_graph(){
     ctx.fillStyle = "#e6e6e6";
     ctx.save();
-    ctx.translate(-WINDOW_WIDTH/2,-WINDOW_HEIGHT/2);
-    ctx.fillRect(0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
-    ctx.restore();
+    ctx.translate(-windowWidth/2,-windowHeight/2);
+    if(windowWidth != getWidth() || windowHeight != getHeight()){
+        ctx.translate(windowWidth/2,windowHeight/2);
+        $("#graph")[0].width = getWidth();
+        $("#graph")[0].height = getHeight();
+        windowWidth = $("#graph")[0].width;
+        windowHeight = $("#graph")[0].height;
+
+        ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#e6e6e6";
+        ctx.fillRect(0,0,windowWidth,windowHeight);
+        ctx.translate(windowWidth/2,windowHeight/2);
+    }
+    else{
+        ctx.fillRect(0,0,windowWidth,windowHeight);
+        ctx.restore();
+    }
 }

@@ -1,6 +1,9 @@
-input {
-    width: 75px;
+body {
+    overflow:hidden;
 }
+/* input {
+    width: 75px;
+} */
 canvas {
     width: -moz-available;
     width: -webkit-fill-available;

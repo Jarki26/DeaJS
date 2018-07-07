@@ -5,68 +5,217 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- jQuery library -->
-    <script src="jquery.min.js"></script>
+    <script src="./jquery.min.js"></script>
     <!-- Latest compiled JavaScript -->
-    <script src="bootstrap.min.js"></script>
+    <script src="./bootstrap.min.js"></script>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="./bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
     <title>DuesApp</title>
 </head>
-<body>
-    <div class="row">
-        <div class="col-sm-0 col-lg-2 ">
-            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
-        </div>
-        <div id="cont" class="col-sm-12 col-lg-8 ">
-            <canvas id="graph" height="200px"></canvas>
-        </div>
-        <div class="col-sm-0 col-lg-2 "></div>
-
-        <!-- Modal -->
-        <div id="myModal" class="modal fade" role="dialog">
-                <div class="modal-dialog">
-            
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
+<body onresize="update_graph()">
+        
+    <div style="position: absolute;z-index: 1;">
+        <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#menu">
+            <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+        </button>
+    </div>
+    
+        
+    <canvas id="graph"></canvas>
+    
+    <!-- Modal Menu -->
+    <div id="menu" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Tools</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="box">
-                                <label>Name: </label>
-                                <input id=node_text>
-                                <label>Wallet: </label>
-                                <input id=wallet_text>
-                                <button onclick="addNode_onclick()">Add Node</button>
-                                <button onclick="deleteNode_onclick()">Delete Node</button>
-                                <button onclick="update_onclick()">Update</button>
-                                <button onclick="clear_onclick()">Clear</button>
-                            </div>
-                            
-                            <br />
-                            <div class="box">
-                                <label>Relations: </label>
-                                <select id="selec1"></select>
-                                <select id="selec2"></select>
-                                <input id=textValue>
-                                <button onclick="addRel_onclick()">Add relation</button>
-                                <button onclick="delRel_onclick()">Delete relation</button>
-                                <button onclick="resRel_onclick()">Reset</button>
-                            </div>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
                 </div>
-            
+                <div class="modal-body">
+                    <button class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-addnode')">Add Node</button>
+                    <button class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-editnode')">Edit Node</button>
+                    <button class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-rennode')">Rename Node</button>
+                    <button class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-delnode')">Delete Node</button>
+                    <br />
+                    <button class="btn btn-warning btn-block" onclick="update_onclick()" data-dismiss="modal"> Update Graph</button>
+                    <button class="btn btn-warning btn-block" onclick="clear_onclick()" data-dismiss="modal"> Clear Graph</button>
+                    <br />
+                    <button class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-addrel')">Add Relation</button>
+                    <button class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-delrel')">Delete Relation</button>
+                    <button class="btn btn-primary btn-block" onclick="resRel_onclick()" data-dismiss="modal">Reset Relations</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
-
+            
+        </div>
     </div>
-    <script src = "graph.js"></script>
+
+    <!-- Modal addnode -->
+    <div id="menu-addnode" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Node</h4>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <label>Name:   </label>
+                        <input id=node_text>
+                        <br />
+                        <label>Wallet: </label>
+                        <input id=wallet_text>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="addNode_onclick()">Ok</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Modal delnode -->
+    <div id="menu-delnode" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Delete Node</h4>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <label>Node: </label>
+                        <select id="delselec"></select>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="deleteNode_onclick()" data-dismiss="modal">Ok</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Modal addrel -->
+    <div id="menu-addrel" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Relation</h4>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <label>From: </label>
+                        <select id="addrelselec1"></select>
+                        <br />
+                        <label>To: </label>
+                        <select id="addrelselec2"></select>
+                        <br />
+                        <label>Value: </label>
+                        <input id=textValue>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="addRel_onclick()">Ok</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Modal delrel -->
+    <div id="menu-delrel" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Delete Relation</h4>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <label>From: </label>
+                        <select id="delarcselec1"></select>
+                        <br />
+                        <label>To: </label>
+                        <select id="delarcselec2"></select>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="delRel_onclick()" data-dismiss="modal">Ok</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Tools</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box">
+                        <label>Name: </label>
+                        <input id=node_text>
+                        <label>Wallet: </label>
+                        <input id=wallet_text>
+                        <button onclick="addNode_onclick()">Add Node</button>
+                        <button onclick="deleteNode_onclick()">Delete Node</button>
+                        <button onclick="update_onclick()">Update</button>
+                        <button onclick="clear_onclick()">Clear</button>
+                    </div>
+                        
+                    <br />
+                    <div class="box">
+                        <label>Relations: </label>
+                        <select id="selec1"></select>
+                        <select id="selec2"></select>
+                        <input id=textValue>
+                        <button onclick="addRel_onclick()">Add relation</button>
+                        <button onclick="delRel_onclick()">Delete relation</button>
+                        <button onclick="resRel_onclick()">Reset</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
     <script>
+        $("#graph")[0].width = $(window)[0].innerWidth;
+        $("#graph")[0].height = $(window)[0].innerHeight;
+        
+        function modalTransition(id1, id2){
+            $("#"+id1).modal("hide");
+            $("#"+id2).modal("show");
+        }
+
         // Node text functions
         function get_textnode(){
             return document.getElementById('node_text').value;
@@ -117,9 +266,8 @@
             update_graph();
         }
         function deleteNode_onclick(){
-            var text = get_textnode();
+            var text = document.getElementById('delselec').value;
             nodes.delete(text);
-            clear_textnode();
             update_graph();
         }
         function update_onclick(){
@@ -130,8 +278,8 @@
             update_graph();
         }
         function addRel_onclick(){
-            var nameA = document.getElementById('selec1').value;
-            var nameB = document.getElementById('selec2').value;
+            var nameA = document.getElementById('addrelselec1').value;
+            var nameB = document.getElementById('addrelselec2').value;
             var nodeA = nodes.get(nameA);
             var nodeB = nodes.get(nameB);
             var arc = new Arc(nodeA, nodeB, get_textvalue());
@@ -140,8 +288,8 @@
             update_graph();
         }
         function delRel_onclick(){
-            var nameA = document.getElementById('selec1').value;
-            var nameB = document.getElementById('selec2').value;
+            var nameA = document.getElementById('delarcselec1').value;
+            var nameB = document.getElementById('delarcselec2').value;
             var key = gen_arc_key(nameA, nameB);
             arcs.delete(key);
             clear_textvalue();
@@ -153,6 +301,6 @@
             update_graph();
         }
     </script>
-
+    <script src = "graph.js"></script>
 </body>
 </html>
