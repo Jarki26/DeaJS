@@ -2,6 +2,7 @@ var canvas = document.getElementById("graph");
 var ctx = canvas.getContext("2d");
 
 const NODE_R = 30;
+const unit = "€";
 
 var windowWidth = getWidth();
 var windowHeight = getHeight();
@@ -20,34 +21,44 @@ function getHeight() {
 // Node functions
 function Node(name="", wallet=0, x=0, y=0){
     this.name = name;
-    this.wallet = Number(wallet);
+    if(Number(wallet)==NaN){
+        this.wallet = 0;
+    } else{
+        this.wallet = round_value(Number(wallet));
+    }
     this.x = x;
     this.y = y;
 
     this.draw_node = function(x=this.x, y=this.y){
+        var xText;
+        var yText;
         this.x = x;
         this.y = y;
         // Node background
-        ctx.fillStyle = "#00FF00";
-        ctx.beginPath();
-        ctx.arc(this.x,this.y,NODE_R,0,2*Math.PI);
-        ctx.fill();
-        ctx.stroke();
+        // ctx.fillStyle = "#00FF00";
+        // ctx.beginPath();
+        // ctx.arc(this.x,this.y,NODE_R,0,2*Math.PI);
+        // ctx.fill();
+        // ctx.stroke();
+
+        ctx.drawImage(imageNode, x-NODE_R, y-NODE_R, NODE_R*2, NODE_R*2);
     
         // Node name
-        ctx.fillStyle = "#000000";
-        var xText = this.x - 10 * this.name.length/4;
-        var yText = this.y + 2.5;
-        ctx.fillText(this.name, xText, yText);
+        ctx.fillStyle = "#FFFFFF";
+        xText = this.x - 10 * this.name.length/4;
+        yText = this.y;
+        ctx.fillText(this.name, xText, yText+25);
         
         // Node wallet
-        xText = this.x - 10 * this.wallet.toString().length/4;
-        ctx.fillText(this.wallet.toString(), xText, yText+20);
+        ctx.fillStyle = "#000000";
+        var wallet = this.wallet.toString() + unit;
+        xText = this.x - 10 * wallet.length/4;
+        ctx.fillText(wallet, xText, yText+12);
     
         // Node shape
-        ctx.beginPath();
-        ctx.arc(this.x,this.y,NODE_R,0,2*Math.PI);
-        ctx.stroke();
+        // ctx.beginPath();
+        // ctx.arc(this.x,this.y,NODE_R,0,2*Math.PI);
+        // ctx.stroke();
     }
 }
 
@@ -83,6 +94,15 @@ function NodeCollection(){
             console.log("Error, node \"", node.name, "\" exists");
         }
     };
+
+    this.edit = function(name, value){
+        var node = this.content[name];
+        var list = arcs.get_from_node(name);
+        for(i in list){
+            arcs.delete(list[i].key);
+        }
+        node.wallet = value;
+    }
 
     this.delete = function(name){
         // var index;
@@ -149,7 +169,12 @@ function Arc(nodeA, nodeB, value){
     this.key = gen_arc_key(nodeA.name, nodeB.name);
     this.nodeA = nodeA;
     this.nodeB = nodeB;
-    this.value = Number(value);
+    if(Number(value)==NaN){
+        this.value = 0;
+    }else{
+        this.value = round_value(Number(value));
+    }
+    
 
     this.draw_arc = function(){
         // var posA = nodes[nodeA];
@@ -162,6 +187,8 @@ function Arc(nodeA, nodeB, value){
         console.log("nodeB:",this.nodeB);
             
         // Draw line
+        
+        ctx.strokeStyle = "#777777";
         ctx.beginPath();
         ctx.moveTo(this.nodeA.x, this.nodeA.y);
         ctx.lineTo(this.nodeB.x, this.nodeB.y);
@@ -178,22 +205,24 @@ function Arc(nodeA, nodeB, value){
         ctx.save();
         ctx.translate(Math.round(this.nodeA.x + vec.x/2), Math.round(this.nodeA.y + vec.y/2));
         // Arc value
-        var xText = -10 * this.value.toString().length/4;
+        var value = this.value.toString() + unit;
+        var xText = -10 * value.length/4;
         var yText = 20;
         ctx.fillStyle = "#000000";
-        ctx.fillText(this.value.toString(), xText, yText);
+        ctx.fillText(value, xText, yText);
     
         ctx.rotate(Math.atan(vec.y/vec.x));
         console.log("vec:",vec);
         console.log("angle:",Math.atan(vec.y/vec.x));
         //if(vec.x<0 || (vec.x==0 && vec.y<0)){ctx.rotate(Math.PI); }
         if(vec.x<0){ctx.rotate(Math.PI); }
-        ctx.beginPath();
-        ctx.moveTo(5,0);
-        ctx.lineTo(-5,10);
-        ctx.lineTo(-5,-10);
-        ctx.lineTo(5,0);
-        ctx.stroke();
+        // ctx.beginPath();
+        // ctx.moveTo(5,0);
+        // ctx.lineTo(-5,10);
+        // ctx.lineTo(-5,-10);
+        // ctx.lineTo(5,0);
+        // ctx.stroke();
+        ctx.drawImage(imageArrow, -10, -10, 20, 20);
         ctx.restore();
     
         this.nodeA.draw_node();
@@ -214,15 +243,15 @@ function ArcsCollection(){
             this.delete(key);
         }
         this.content[key] = arc;
-        arc.nodeA.wallet -= arc.value;
-        arc.nodeB.wallet += arc.value;
+        arc.nodeA.wallet = round_value(arc.nodeA.wallet - arc.value);
+        arc.nodeB.wallet = round_value(arc.nodeB.wallet + arc.value);
     }
 
     this.delete = function(key){
         var arc = arcs.get(key);
         if(arc != undefined){
-            arc.nodeA.wallet += arc.value;
-            arc.nodeB.wallet -= arc.value;
+            arc.nodeA.wallet = round_value(arc.nodeA.wallet + arc.value);
+            arc.nodeB.wallet = round_value(arc.nodeB.wallet - arc.value);
             delete this.content[key];
         }
     }
@@ -231,6 +260,20 @@ function ArcsCollection(){
         for(key in this.content){
             this.delete(key);
         }
+    }
+
+    this.get_from_node = function(name){
+        var nameB;
+        var arc;
+        var list = [];
+        for(i in nodes.keys()){
+            nameB = nodes.keys()[i];
+            arc = arcs.get(gen_arc_key(name, nameB));
+            if(arc != undefined){
+                list.append(arc);
+            }
+        }
+        return list;
     }
 }
 
@@ -243,6 +286,10 @@ function del_opt(idSelec, name){
         }
     }
     selector.remove(optionPos);
+}
+
+function round_value(num){
+    return Math.trunc(num*100)/100;
 }
 
 function round_vec(vec){

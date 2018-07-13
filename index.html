@@ -14,7 +14,65 @@
     <title>DuesApp</title>
 </head>
 <body onresize="update_graph()">
+    <script>
+        var language; 
+        function getLanguage() {
+            (localStorage.getItem('language') == null) ? setLanguage('es') : false;
+            $.ajax({ 
+                url:  './language/' +  localStorage.getItem('language') + '.json', 
+                dataType: 'json', async: false, dataType: 'json', 
+                success: function (lang) { language = lang } 
+            });
+        }
         
+        function setLanguage(lang) {
+            localStorage.setItem('language', lang);
+        }
+        setLanguage('es');
+        getLanguage();
+        // Load text from selected language
+        $(document).ready(function(){
+            $('#menu h4')[0].innerText = language.menu;
+
+            // Menu buttons
+            $('#button-addnode')[0].innerText = language.menu_addnode;
+            $('#button-editnode')[0].innerText = language.menu_editnode;
+            $('#button-rennode')[0].innerText = language.menu_rennode;
+            $('#button-delnode')[0].innerText = language.menu_delnode;
+            $('#button-update')[0].innerText = language.menu_update;
+            $('#button-clear')[0].innerText = language.menu_clear;
+            $('#button-addrel')[0].innerText = language.menu_addrel;
+            $('#button-delrel')[0].innerText = language.menu_delrel;
+            $('#button-reset')[0].innerText = language.menu_reset;
+            
+            // Modals
+            $("#menu-addnode h4")[0].innerText = language.menu_addnode;
+            $("#menu-addnode label")[0].innerText = language.menu_addnode_name;
+            $("#menu-addnode label")[1].innerText = language.menu_addnode_wallet;
+            $("#menu-delnode h4")[0].innerText = language.menu_delnode;
+            $("#menu-delnode label")[0].innerText = language.menu_delnode_node;
+            $("#menu-addrel h4")[0].innerText = language.menu_addrel;
+            $("#menu-addrel label")[0].innerText = language.menu_rel_to;
+            $("#menu-addrel label")[1].innerText = language.menu_rel_from;
+            $("#menu-addrel label")[2].innerText = language.menu_rel_value;
+            $("#menu-delrel h4")[0].innerText = language.menu_delrel;
+            $("#menu-delrel label")[0].innerText = language.menu_rel_to;
+            $("#menu-delrel label")[1].innerText = language.menu_rel_from;
+            
+
+            // Modal footer
+            var okButtons = $(".modal-footer .btn-success")
+            for(button in okButtons){
+                okButtons[button].innerText = language.menu_ok;
+            }
+            var cancelButtons = $(".modal-footer .btn-danger")
+            for(button in cancelButtons){
+                cancelButtons[button].innerText = language.menu_cancel;
+            }
+            
+        });
+    </script>
+
     <div style="position: absolute;z-index: 1;">
         <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#menu">
             <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
@@ -35,17 +93,17 @@
                     <h4 class="modal-title">Tools</h4>
                 </div>
                 <div class="modal-body">
-                    <button class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-addnode')">Add Node</button>
-                    <button class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-editnode')">Edit Node</button>
-                    <button class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-rennode')">Rename Node</button>
-                    <button class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-delnode')">Delete Node</button>
+                    <button id="button-addnode" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-addnode')">Add Node</button>
+                    <button id="button-editnode" class="btn btn-primary btn-block disabled" onclick="modalTransition('menu','menu-editnode')">Edit Node</button>
+                    <button id="button-rennode" class="btn btn-primary btn-block disabled" onclick="modalTransition('menu','menu-rennode')">Rename Node</button>
+                    <button id="button-delnode" class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-delnode')">Delete Node</button>
                     <br />
-                    <button class="btn btn-warning btn-block" onclick="update_onclick()" data-dismiss="modal"> Update Graph</button>
-                    <button class="btn btn-warning btn-block" onclick="clear_onclick()" data-dismiss="modal"> Clear Graph</button>
+                    <button id="button-update" class="btn btn-warning btn-block" onclick="update_onclick()" data-dismiss="modal"> Update Graph</button>
+                    <button id="button-clear" class="btn btn-warning btn-block" onclick="clear_onclick()" data-dismiss="modal"> Clear Graph</button>
                     <br />
-                    <button class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-addrel')">Add Relation</button>
-                    <button class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-delrel')">Delete Relation</button>
-                    <button class="btn btn-primary btn-block" onclick="resRel_onclick()" data-dismiss="modal">Reset Relations</button>
+                    <button id="button-addrel" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-addrel')">Add Relation</button>
+                    <button id="button-delrel" class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-delrel')">Delete Relation</button>
+                    <button id="button-reset" class="btn btn-danger btn-block" onclick="resRel_onclick()" data-dismiss="modal">Reset Relations</button>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -167,50 +225,18 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="myModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-        
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Tools</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="box">
-                        <label>Name: </label>
-                        <input id=node_text>
-                        <label>Wallet: </label>
-                        <input id=wallet_text>
-                        <button onclick="addNode_onclick()">Add Node</button>
-                        <button onclick="deleteNode_onclick()">Delete Node</button>
-                        <button onclick="update_onclick()">Update</button>
-                        <button onclick="clear_onclick()">Clear</button>
-                    </div>
-                        
-                    <br />
-                    <div class="box">
-                        <label>Relations: </label>
-                        <select id="selec1"></select>
-                        <select id="selec2"></select>
-                        <input id=textValue>
-                        <button onclick="addRel_onclick()">Add relation</button>
-                        <button onclick="delRel_onclick()">Delete relation</button>
-                        <button onclick="resRel_onclick()">Reset</button>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-            
-        </div>
-    </div>
     <script>
         $("#graph")[0].width = $(window)[0].innerWidth;
         $("#graph")[0].height = $(window)[0].innerHeight;
-        
+        var imageNode;
+        var imageArrow;
+        window.onload = function() {
+            imageNode = new Image();
+            imageNode.src = "./images/node.PNG";
+            imageArrow = new Image();
+            imageArrow.src = "./images/arrow.PNG";
+        };
+
         function modalTransition(id1, id2){
             $("#"+id1).modal("hide");
             $("#"+id2).modal("show");
