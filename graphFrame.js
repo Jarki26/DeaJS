@@ -106,6 +106,19 @@ function clear_checkbill(){
 	set_checkbill(false);
 }
 
+// Cant wallet functions
+function get_textcant(){
+	return document.getElementById('cant_text').value;
+}
+
+function set_textcant(val){
+	return document.getElementById('cant_text').value = val;
+}
+
+function clear_textcant(){
+	set_textcant("1");
+}
+
 // Value text functions
 function get_textvalue(){
 	if(document.getElementById('textValue').value == ""){
@@ -149,9 +162,9 @@ function share_onclick(){
 
 function addNode_onclick(){
 	var text=get_textnode();
-	var wallet = get_textwallet();
+	var wallet = get_textwallet() * get_textcant();
 	var node;
-	if($("#bill_checkbox")[0].checked){
+	if(get_checkbill()){
 		node = new Bill(text, wallet);
 	}else{
 		node = new Node(text, wallet);
@@ -161,6 +174,7 @@ function addNode_onclick(){
 		clear_textnode();
 		clear_textwallet();
 		clear_checkbill();
+		clear_textcant();
 		update_graph();
 	}else{
 		alert_text("alert-danger", language.alert_addnode_fail.replace("%s", node.name));

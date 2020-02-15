@@ -113,12 +113,16 @@
                             </tr>
                             <tr>
                                 <td><label>Wallet:</label></td>
-                                <td><input id=wallet_text></td>
+                                <td><input id=wallet_text type="number" step="0.01"></td>
                             </tr>
                             <tr>
                                 <td><div class="checkbox">
                                     <label><input id="bill_checkbox" type="checkbox" value="">Add as bill</label>
                                 </div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Cant:</label></td>
+                                <td><input id=cant_text type="number" min="1" step="1" value="1"></td>
                             </tr>
                             
                         </table>
@@ -152,7 +156,7 @@
                             </tr>
                             <tr>
                                 <td><label>Wallet: </label></td>
-                                <td><input id=walletedit_text></td>
+                                <td><input id=walletedit_text type="number" step="0.01"></td>
                             </tr>
                         </table>
                     </center>
@@ -222,7 +226,7 @@
                             </tr>
                             <tr>
                                 <td><label>Value: </label></td>
-                                <td><input id=textValue></td>
+                                <td><input id=textValue type="number" step="0.01"></td>
                             </tr>
                         </table>
                     </center> 
