@@ -375,16 +375,23 @@ function Arc(nameA, nameB, value){
     this.key = gen_arc_key(nameA, nameB);
 
     this.sum = function(arc){
-        if(this.key == arc.key){
-            if(this.getNameA() == arc.getNameA() && this.getNameB() == arc.getNameB()){
-                this = new Arc(this.getNameA(), this.getNameB(), this.getValue() + arc.getValue());
-            } else if(this.getNameA() == arc.getNameB() && this.getNameB() == arc.getNameA()){
-                this = new Arc(this.getNameA(), this.getNameB(), this.getValue() - arc.getValue());
+        var result = this.clone();
+        if(result.key == arc.key){
+            if(result.getNameA() == arc.getNameA() && result.getNameB() == arc.getNameB()){
+                result = new Arc(result.getNameA(), result.getNameB(), result.getValue() + arc.getValue());
+            } else if(result.getNameA() == arc.getNameB() && result.getNameB() == arc.getNameA()){
+                result = new Arc(result.getNameA(), result.getNameB(), result.getValue() - arc.getValue());
             } else{
-                console.log("ERROR al sumar arc:"+this+" and "+arc);
+                console.error("ERROR al sumar arc:"+result+" and "+arc);
             }
+        } else {
+            console.error("ERROR key "+result.key+" y "+arc.key+" no coinciden");
         }
-        return this;
+        return result
+    }
+
+    this.clone = function(){
+        return new Arc(this.nameA, this.nameB, this.value);
     }
     
     this.setNameA = function(nameA){
@@ -471,15 +478,22 @@ function ArcsCollection(){
         if(arc.getNameA() == arc.getNameB()){
             return null;
         }
-        var nodeA = nodes.get(arc.getNameA());
-        var nodeB = nodes.get(arc.getNameB());
         var key = gen_arc_key(arc.getNameA(), arc.getNameB());
         if(this.content[key] != undefined){
-            arc = this.content[key].sum(arc);
+            var current = this.content[key].clone();
+            this.delete(key);
+            this.content[key] = current.sum(arc);
+            var nodeA = nodes.get(current.getNameA());
+            var nodeB = nodes.get(current.getNameB());
+            nodeA.wallet = round_value(nodeA.getWallet() - this.content[key].value);
+            nodeB.wallet = round_value(nodeB.getWallet() + this.content[key].value);
+        } else {    
+            var nodeA = nodes.get(arc.getNameA());
+            var nodeB = nodes.get(arc.getNameB());
+            this.content[key] = arc;
+            nodeA.wallet = round_value(nodeA.getWallet() - arc.value);
+            nodeB.wallet = round_value(nodeB.getWallet() + arc.value);
         }
-        nodeA.wallet = round_value(nodeA.getWallet() - arc.value);
-        nodeB.wallet = round_value(nodeB.getWallet() + arc.value);
-        this.content[key] = arc;
     }
 
     this.delete = function(key){
