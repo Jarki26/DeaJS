@@ -28,17 +28,18 @@ function save() {
         obj.dues[obj.dues.length] = obji;
     }
     var url = window.location.origin + window.location.pathname +"?data=" + encodeURIComponent(JSON.stringify(obj));
-    url='http://jarki26.com/shorten?url='+encodeURIComponent(url);
-    var request = new XMLHttpRequest();
+    //url='http://jarki26.com/shorten?url='+encodeURIComponent(url);
+    //var request = new XMLHttpRequest();
     // request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    request.onreadystatechange = function() {
-        if(request.readyState == 4 && request.status == 201) {
-            save_cb(request.responseText);
-        }
-    }
-    request.open("POST", url, true);
-    request.send();
+    //request.onreadystatechange = function() {
+    //    if(request.readyState == 4 && request.status == 201) {
+    //        save_cb(request.responseText);
+    //    }
+    //}
+    //request.open("POST", url, true);
+    //request.send();
     // return url2;
+    save_cb(url);
 }
 
 function save_cb(item){
