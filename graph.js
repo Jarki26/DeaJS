@@ -328,11 +328,11 @@ function calc_pos(i, n){
 }
 
 function gen_arc_key(nodeA, nodeB){
-    var list = [];
-    list.push(nodeA);
-    list.push(nodeB);
-    list.sort();
-    return "".concat(list[0],";",list[1]);
+    if(nodeA<nodeB){
+        return "".concat(nodeA,";",nodeB);
+    } else {
+        return "".concat(nodeB,";",nodeA);
+    }
 }
 
 function decomp_key(node, key){
@@ -350,18 +350,41 @@ function decomp_key(node, key){
 
 // Arcs functions
 function Arc(nameA, nameB, value){
-    var nodeA = nodes.get(nameA);
-    var nodeB = nodes.get(nameB);
-    if(nodeA == undefined || nodeB == undefined){
-        return null;
-    }
-    this.key = gen_arc_key(nameA, nameB);
-    this.nameA = nameA;
-    this.nameB = nameB;
     if(Number(value)==NaN){
         this.value = 0;
     }else{
         this.value = round_value(Number(value));
+    }
+    var nodeA;
+    var nodeB;
+    if(this.value < 0){
+        nodeB = nodes.get(nameA);
+        nodeA = nodes.get(nameB);
+        this.nameB = nameA;
+        this.nameA = nameB;
+        this.value *= -1;
+    } else {
+        nodeA = nodes.get(nameA);
+        nodeB = nodes.get(nameB);
+        this.nameA = nameA;
+        this.nameB = nameB;
+    }
+    if(nodeA == undefined || nodeB == undefined){
+        return null;
+    }
+    this.key = gen_arc_key(nameA, nameB);
+
+    this.sum = function(arc){
+        if(this.key == arc.key){
+            if(this.getNameA() == arc.getNameA() && this.getNameB() == arc.getNameB()){
+                this = new Arc(this.getNameA(), this.getNameB(), this.getValue() + arc.getValue());
+            } else if(this.getNameA() == arc.getNameB() && this.getNameB() == arc.getNameA()){
+                this = new Arc(this.getNameA(), this.getNameB(), this.getValue() - arc.getValue());
+            } else{
+                console.log("ERROR al sumar arc:"+this+" and "+arc);
+            }
+        }
+        return this;
     }
     
     this.setNameA = function(nameA){
@@ -452,11 +475,11 @@ function ArcsCollection(){
         var nodeB = nodes.get(arc.getNameB());
         var key = gen_arc_key(arc.getNameA(), arc.getNameB());
         if(this.content[key] != undefined){
-            this.delete(key);
+            arc = this.content[key].sum(arc);
         }
-        this.content[key] = arc;
         nodeA.wallet = round_value(nodeA.getWallet() - arc.value);
         nodeB.wallet = round_value(nodeB.getWallet() + arc.value);
+        this.content[key] = arc;
     }
 
     this.delete = function(key){
