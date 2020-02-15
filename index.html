@@ -11,6 +11,7 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" type="text/css" href="./bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="./style.css">
+    <script src = "share.js"></script>
     <title>DuesApp</title>
 </head>
 <body onresize="update_graph()">
@@ -28,10 +29,8 @@
         function setLanguage(lang) {
             localStorage.setItem('language', lang);
         }
-        setLanguage('es');
-        getLanguage();
-        // Load text from selected language
-        $(document).ready(function(){
+
+        function translate(){
             $('#menu h4')[0].innerText = language.menu;
 
             // Menu buttons
@@ -42,45 +41,92 @@
             $('#button-update')[0].innerText = language.menu_update;
             $('#button-clear')[0].innerText = language.menu_clear;
             $('#button-addrel')[0].innerText = language.menu_addrel;
+            $('#button-divrel')[0].innerText = language.menu_divrel;
             $('#button-delrel')[0].innerText = language.menu_delrel;
             $('#button-reset')[0].innerText = language.menu_reset;
-            
+
             // Modals
             $("#menu-addnode h4")[0].innerText = language.menu_addnode;
             $("#menu-addnode label")[0].innerText = language.menu_addnode_name;
             $("#menu-addnode label")[1].innerText = language.menu_addnode_wallet;
+            $("#menu-addnode label")[2].childNodes[1].textContent = language.menu_addnode_isbill;
+            $("#menu-editnode h4")[0].innerText = language.menu_editnode;
+            $("#menu-editnode label")[0].innerText = language.menu_delnode_node;
+            $("#menu-editnode label")[1].innerText = language.menu_addnode_wallet;
             $("#menu-delnode h4")[0].innerText = language.menu_delnode;
             $("#menu-delnode label")[0].innerText = language.menu_delnode_node;
             $("#menu-addrel h4")[0].innerText = language.menu_addrel;
             $("#menu-addrel label")[0].innerText = language.menu_rel_to;
             $("#menu-addrel label")[1].innerText = language.menu_rel_from;
             $("#menu-addrel label")[2].innerText = language.menu_rel_value;
+            $("#menu-divrel h4")[0].innerText = language.menu_divrel;
+            $("#menu-divrel label")[0].innerText = language.menu_divrel_bill;
+            $("#menu-divrel label")[1].innerText = language.menu_divrel_nodes;
             $("#menu-delrel h4")[0].innerText = language.menu_delrel;
             $("#menu-delrel label")[0].innerText = language.menu_rel_to;
             $("#menu-delrel label")[1].innerText = language.menu_rel_from;
-            
+
 
             // Modal footer
             var okButtons = $(".modal-footer .btn-success")
             for(button in okButtons){
                 okButtons[button].innerText = language.menu_ok;
             }
-            var cancelButtons = $(".modal-footer .btn-danger")
+            var cancelButtons = $(".modal-footer .btn-default")
             for(button in cancelButtons){
                 cancelButtons[button].innerText = language.menu_cancel;
             }
-            
+        }
+
+        setLanguage('es');
+        getLanguage();
+        // Load text from selected language
+        $(document).ready(function(){
+           translate();
         });
     </script>
 
+    <div id="alert" class="alert hidden" onclick="alert_onclick()">
+        <a href="#" class="close" onclick="alert_onclick()" aria-label="close">&times;</a>
+        <div>Success! Indicates a successful or positive action</div>
+    </div>
+
     <div style="position: absolute;z-index: 1;">
-        <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#menu">
+        <button type="button" class="btn btn-default btn-lg icon" data-toggle="modal" data-target="#menu">
             <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+        </button>
+        <button type="button" style="right: 0px" class="btn btn-default btn-lg icon" onclick="share_onclick()" data-toggle="modal">
+            <span class="glyphicon glyphicon glyphicon-share" aria-hidden="true"></span>
         </button>
     </div>
     
         
     <canvas id="graph"></canvas>
+
+    <div id="share" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Share</h4>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <table>
+                            <tr>
+                                <td><label>Url: </label></td>
+                                <td><input id="share-url" readonly></td>
+                            </tr>
+                        </table>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Modal Menu -->
     <div id="menu" class="modal fade" role="dialog">
@@ -94,19 +140,20 @@
                 </div>
                 <div class="modal-body">
                     <button id="button-addnode" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-addnode')">Add Node</button>
-                    <button id="button-editnode" class="btn btn-primary btn-block disabled" onclick="modalTransition('menu','menu-editnode')">Edit Node</button>
-                    <button id="button-rennode" class="btn btn-primary btn-block disabled" onclick="modalTransition('menu','menu-rennode')">Rename Node</button>
+                    <button id="button-editnode" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-editnode')">Edit Node</button>
+                    <button id="button-rennode" class="btn btn-primary btn-block disabled" onclick="">Rename Node</button>
                     <button id="button-delnode" class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-delnode')">Delete Node</button>
                     <br />
                     <button id="button-update" class="btn btn-warning btn-block" onclick="update_onclick()" data-dismiss="modal"> Update Graph</button>
                     <button id="button-clear" class="btn btn-warning btn-block" onclick="clear_onclick()" data-dismiss="modal"> Clear Graph</button>
                     <br />
                     <button id="button-addrel" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-addrel')">Add Relation</button>
+                    <button id="button-divrel" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-divrel')">Divide Bill</button>
                     <button id="button-delrel" class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-delrel')">Delete Relation</button>
                     <button id="button-reset" class="btn btn-danger btn-block" onclick="resRel_onclick()" data-dismiss="modal">Reset Relations</button>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
             
@@ -125,16 +172,60 @@
                 </div>
                 <div class="modal-body">
                     <center>
-                        <label>Name:   </label>
-                        <input id=node_text>
-                        <br />
-                        <label>Wallet: </label>
-                        <input id=wallet_text>
-                    </center>
+                        <table>
+                            <tr>
+                                <td><label>Name:</label></td>
+                                <td><input id=node_text></td>
+                            </tr>
+                            <tr>
+                                <td><label>Wallet:</label></td>
+                                <td><input id=wallet_text></td>
+                            </tr>
+                            <tr>
+                                <td><div class="checkbox">
+                                    <label><input id="bill_checkbox" type="checkbox" value="">Add as bill</label>
+                                </div></td>
+                            </tr>
+                            
+                        </table>
+                    </center>                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" onclick="addNode_onclick()">Ok</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-addnode','menu')">Close</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Modal editnode -->
+    <div id="menu-editnode" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Node</h4>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <table>
+                            <tr>
+                                <td><label>Node: </label></td>
+                                <td><select id="editselec"></select></td>
+                            </tr>
+                            <tr>
+                                <td><label>Wallet: </label></td>
+                                <td><input id=walletedit_text></td>
+                            </tr>
+                        </table>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="editNode_onclick()" >Ok</button>
+                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-editnode','menu')">Close</button>
                 </div>
             </div>
             
@@ -153,13 +244,21 @@
                 </div>
                 <div class="modal-body">
                     <center>
-                        <label>Node: </label>
-                        <select id="delselec"></select>
-                    </center>
+                        <table>
+                            <tr>
+                                <td><label>Node: </label></td>
+                                <td><select id="delselec"></select></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </center> 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" onclick="deleteNode_onclick()" data-dismiss="modal">Ok</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-delnode','menu')">Close</button>
                 </div>
             </div>
             
@@ -178,19 +277,58 @@
                 </div>
                 <div class="modal-body">
                     <center>
-                        <label>From: </label>
-                        <select id="addrelselec1"></select>
-                        <br />
-                        <label>To: </label>
-                        <select id="addrelselec2"></select>
-                        <br />
-                        <label>Value: </label>
-                        <input id=textValue>
-                    </center>
+                        <table>
+                            <tr>
+                                <td><label>From: </label></td>
+                                <td><select id="addrelselec1"></select></td>
+                            </tr>
+                            <tr>
+                                <td><label>To: </label></td>
+                                <td><select id="addrelselec2"></select></td>
+                            </tr>
+                            <tr>
+                                <td><label>Value: </label></td>
+                                <td><input id=textValue></td>
+                            </tr>
+                        </table>
+                    </center> 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" onclick="addRel_onclick()">Ok</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-addrel','menu')">Close</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Modal divrel -->
+    <div id="menu-divrel" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Divide Bill</h4>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <table>
+                            <tr>
+                                <td><label>Bill: </label></td>
+                                <td><select id="divrelselec1"></select></td>
+                            </tr>
+                            <tr>
+                                <td><label>Users: </label></td>
+                                <td><select id="divrelselec2" multiple></select></td>
+                            </tr>
+                        </table>
+                    </center> 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="divRel_onclick()" data-dismiss="modal">Ok</button>
+                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-divrel','menu')">Close</button>
                 </div>
             </div>
             
@@ -209,16 +347,21 @@
                 </div>
                 <div class="modal-body">
                     <center>
-                        <label>From: </label>
-                        <select id="delarcselec1"></select>
-                        <br />
-                        <label>To: </label>
-                        <select id="delarcselec2"></select>
+                        <table>
+                            <tr>
+                                <td><label>From: </label></td>
+                                <td><select id="delarcselec1"></select></td>
+                            </tr>
+                            <tr>
+                                <td><label>To: </label></td>
+                                <td><select id="delarcselec2"></select></td>
+                            </tr>
+                        </table>
                     </center>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" onclick="delRel_onclick()" data-dismiss="modal">Ok</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-delrel','menu')">Close</button>
                 </div>
             </div>
             
@@ -229,12 +372,52 @@
         $("#graph")[0].width = $(window)[0].innerWidth;
         $("#graph")[0].height = $(window)[0].innerHeight;
         var imageNode;
+        var imageBill;
         var imageArrow;
         window.onload = function() {
+            loadedNode = false;
+            loadedArrow = false;
+            loadedBill = false;
+
             imageNode = new Image();
             imageNode.src = "./images/node.PNG";
+            imageNode.onload = function(){
+                loadedNode = true;
+                if(!(loadedNode && loadedArrow && loadedBill)){
+                    console.log("loadednode:",loadedNode);
+                    console.log("loadedarrow:",loadedArrow);
+                    console.log("loadedbill:",loadedBill);
+                    return null;
+                }
+                console.log("image node loaded");
+                load();
+            };
+            imageBill = new Image();
+            imageBill.src = "./images/bill.PNG";
+            imageBill.onload = function(){
+                loadedBill = true;
+                if(!(loadedNode && loadedArrow && loadedBill)){
+                    console.log("loadednode:",loadedNode);
+                    console.log("loadedarrow:",loadedArrow);
+                    console.log("loadedbill:",loadedBill);
+                    return null;
+                }
+                console.log("image bill loaded");
+                load();
+            };
             imageArrow = new Image();
             imageArrow.src = "./images/arrow.PNG";
+            imageArrow.onload = function(){
+                loadedArrow = true;
+                if(!(loadedNode && loadedArrow && loadedBill)){
+                    console.log("loadednode:",loadedNode);
+                    console.log("loadedarrow:",loadedArrow);
+                    console.log("loadedbill:",loadedBill);
+                    return null;
+                }
+                console.log("image arrow loaded");
+                load();
+            };
         };
 
         function modalTransition(id1, id2){
@@ -266,6 +449,32 @@
         function clear_textwallet(){
             set_textwallet("");
         }
+
+        function get_textwalletedit(){
+            if(document.getElementById('walletedit_text').value == ""){
+                return "0";
+            }
+            return document.getElementById('walletedit_text').value;
+        }
+        function set_textwalletedit(input){
+            document.getElementById('walletedit_text').value = input;
+        }
+        function clear_textwalletedit(){
+            set_textwalletedit("");
+        }
+
+        // Bill checkbox functions
+        function get_checkbill(){
+            return document.getElementById("bill_checkbox").checked;
+        }
+
+        function set_checkbill(val){
+            document.getElementById("bill_checkbox").checked = val;
+        }
+
+        function clear_checkbill(){
+            set_checkbill(false);
+        }
         
         // Value text functions
         function get_textvalue(){
@@ -280,20 +489,72 @@
         function clear_textvalue(){
             set_textvalue("");
         }
+
+        // Sector functions
+        function reset_selector(id){
+            document.getElementById(id).selectedIndex = -1;
+        }
+
+        // Alert text
+        function alert_text(alertClass, text){
+            // return null;
+            $("#alert").removeClass("alert-success");
+            $("#alert").removeClass("alert-danger");
+            $("#alert").addClass(alertClass);
+            $("#alert div")[0].textContent = text;
+            $("#alert").removeClass("hidden");
+        }
         
         // UI functions
+        function alert_onclick(){
+            $("#alert").removeClass("hidden");
+            $("#alert").addClass("hidden");
+            $("#alert").removeClass("alert-success");
+            $("#alert").removeClass("alert-danger");
+        }
+
+        function share_onclick(){
+            save();
+        }
+
         function addNode_onclick(){
             var text=get_textnode();
             var wallet = get_textwallet();
-            var node = new Node(text, wallet)
-            nodes.add(node);
-            clear_textnode();
-            clear_textwallet();
-            update_graph();
+            var node;
+            if($("#bill_checkbox")[0].checked){
+                node = new Bill(text, wallet);
+            }else{
+                node = new Node(text, wallet);
+            }
+            if(nodes.add(node)){
+                alert_text("alert-success", language.alert_addnode_succ.replace("%s", node.name));
+                clear_textnode();
+                clear_textwallet();
+                clear_checkbill();
+                update_graph();
+            }else{
+                alert_text("alert-danger", language.alert_addnode_fail.replace("%s", node.name));
+                clear_textnode();
+                clear_textwallet();
+            }
+        }
+        function editNode_onclick(){
+            var text = document.getElementById('editselec').value;
+            var value = get_textwalletedit();
+            if(nodes.edit(text, value)){
+                alert_text("alert-success", language.alert_editnode_succ.replace("%s", text));
+                clear_textwalletedit();
+                reset_selector('editselec');
+                update_graph();
+            }else{
+                alert_text("alert-danger", language.alert_editnode_fail.replace("%s", value));
+                clear_textwalletedit();
+            }
         }
         function deleteNode_onclick(){
             var text = document.getElementById('delselec').value;
             nodes.delete(text);
+            reset_selector('delselec');
             update_graph();
         }
         function update_onclick(){
@@ -306,24 +567,62 @@
         function addRel_onclick(){
             var nameA = document.getElementById('addrelselec1').value;
             var nameB = document.getElementById('addrelselec2').value;
-            var nodeA = nodes.get(nameA);
-            var nodeB = nodes.get(nameB);
-            var arc = new Arc(nodeA, nodeB, get_textvalue());
+            var value = get_textvalue();
+            if(isNaN(Number(value))){
+                alert_text("alert-danger", language.alert_addrel_fail1.replace("%s", value));
+                clear_textvalue();
+                return null;
+            }
+            var arc = new Arc(nameA, nameB, value);
+            if(arc == null){
+                alert_text("alert-danger", language.alert_addrel_fail2);
+                return null;
+            }
             arcs.add(arc);
             clear_textvalue();
+            reset_selector('addrelselec1');
+            reset_selector('addrelselec2');
             update_graph();
+            alert_text("alert-success", language.alert_addrel_succ.replace("%s1", nameA).replace("%s2", nameB).replace("%s3", value));
+        }
+        function divRel_onclick(){
+            if(document.getElementById('divrelselec1').selectedIndex == -1){
+                return null;
+            }
+            if(document.getElementById('divrelselec2').selectedIndex == -1){
+                return null;
+            }
+            var nameBill = document.getElementById('divrelselec1').value;
+            var bill = nodes.get(nameBill);
+            var nodesL = document.getElementById('divrelselec2').selectedOptions;
+            var value = ceil_value(-bill.getWallet()/nodesL.length);
+            console.log("namebill:",nameBill);
+            console.log("bill:",bill);
+            console.log("nodes:",nodesL);
+            for(var i = 0; i<nodesL.length; i++){
+                var nameB = nodesL[i].textContent;
+                var arc = new Arc(nameB, nameBill, value);
+                arcs.add(arc);
+                console.log("nameB:",nameB);
+                console.log("i:",i);
+                console.log("value:",value);
+                console.log("arc:",arc);
+            }
+            update_graph();
+            reset_selector('divrelselec1');
+            reset_selector('divrelselec2');
         }
         function delRel_onclick(){
             var nameA = document.getElementById('delarcselec1').value;
             var nameB = document.getElementById('delarcselec2').value;
             var key = gen_arc_key(nameA, nameB);
             arcs.delete(key);
-            clear_textvalue();
+            reset_selector('delarcselec1');
+            reset_selector('delarcselec2');
             update_graph();
         }
         function resRel_onclick(){
             arcs.delete_all();
-            clear_textvalue();
             update_graph();
         }
     </script>
