@@ -93,6 +93,34 @@ function clear_textwalletedit(){
 	set_textwalletedit("");
 }
 
+// Discount text functions
+function get_textwalletdis(){
+	if(document.getElementById('walletdis_text').value == ""){
+		return "0";
+	}
+	return document.getElementById('walletdis_text').value;
+}
+function set_textwalletdis(input){
+	document.getElementById('walletdis_text').value = input;
+}
+function clear_textwalletdis(){
+	set_textwalletdis("");
+}
+
+// Tax text functions
+function get_textwallettax(){
+	if(document.getElementById('wallettax_text').value == ""){
+		return "0";
+	}
+	return document.getElementById('wallettax_text').value;
+}
+function set_textwallettax(input){
+	document.getElementById('wallettax_text').value = input;
+}
+function clear_textwallettax(){
+	set_textwallettax("");
+}
+
 // Bill checkbox functions
 function get_checkbill(){
 	return document.getElementById("bill_checkbox").checked;
@@ -162,7 +190,7 @@ function share_onclick(){
 
 function addNode_onclick(){
 	var text=get_textnode();
-	var wallet = get_textwallet() * get_textcant();
+	var wallet = (get_textwallet() * get_textcant()) * (1 - get_textwalletdis()/100) * (1 + get_textwallettax()/100);
 	var node;
 	if(get_checkbill()){
 		node = new Bill(text, wallet);
@@ -175,6 +203,8 @@ function addNode_onclick(){
 		clear_textwallet();
 		clear_checkbill();
 		clear_textcant();
+		clear_textwalletdis();
+		clear_textwallettax();
 		update_graph();
 	}else{
 		alert_text("alert-danger", language.alert_addnode_fail.replace("%s", node.name));
