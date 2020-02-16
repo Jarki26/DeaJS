@@ -1,16 +1,15 @@
 import Node from "./entities/Node.js";
-import NodeCollection from "./entities/NodeCollection.js"
 
 var canvas = document.getElementById("graph");
-var ctx = canvas.getContext("2d");
+export var ctx = canvas.getContext("2d");
 
 const NODE_R = 30;
 const unit = "€";
 
 var windowWidth = getWidth();
 var windowHeight = getHeight();
-var nodes = new NodeCollection();
-var arcs = new ArcsCollection();
+export var nodes = new NodeCollection();
+export var arcs = new ArcsCollection();
 
 ctx.translate(windowWidth/2, windowHeight/2);
 clear_graph();
@@ -53,97 +52,135 @@ function Bill(name="", wallet=0, x=0, y=0){
     return node;
 }
 
-// function BillCollection(value=0){
-//     if(Number(value)==NaN){
-//         this.value = 0;
-//     } else{
-//         this.value = round_value(Number(value));
-//     }
-//     this.bills = {};
+function NodeCollection() {
+    this.content = {};
 
-//     this.add = function(node, value){
-//         var due = {};
-//         if(Number(value)==NaN){
-//             value = 0;
-//         } else{
-//             value = round_value(Number(value));
-//         }
-//         due.node = node;
-//         due.value = value;
-//         this.bills[node.name] = due;
-//         this.value -= value;
-//         node.wallet -= value;
-//     };
-
-//     this.delete = function(name){
-//         if(this.bills[name] == undefined){
-//             return null;
-//         }
-//         var due = this.bills[name];
-//         this.value += due.value;
-//         due.node.wallet += due.value;
-//     }
-
-//     this.draw_node = function(){
-//         if(this.value == undefined){
-//             return null;
-//         }
-//         var xText = -140*nodes.length()/Math.PI;
-//         var yText = -140*nodes.length()/Math.PI;
-
-//         ctx.drawImage(imageBill, xText-NODE_R, yText-NODE_R, NODE_R*2, NODE_R*2);
-            
-//         // Bill value
-//         ctx.fillStyle = "#000000";
-//         var value = this.value.toString() + unit;
-//         xText += - 10 * value.length/4;
-//         ctx.fillText(value, xText, yText+12);
-//     };
-
-//     this.draw_arc = function(name){
-//         if(this.bills[name] == undefined){
-//             return null;
-//         }
-//         var due = this.bills[name];
-//         // Draw line        
-//         ctx.strokeStyle = "#777777";
-//         ctx.beginPath();
-//         ctx.moveTo(0, 0);
-//         ctx.lineTo(due.node.x, due.node.y);
-//         ctx.stroke();
+    this.length = function() {
+        return this.keys().length; 
+    }
     
-//         var vec = {};
-//         vec.x = -due.node.x;
-//         vec.y = -due.node.y;
-//         round_vec(vec);
-        
-//         // Draw triangle
-//         ctx.save();
-//         ctx.translate(Math.round(-vec.x/2), Math.round(-vec.y/2));
-//         ctx.rotate(Math.atan(vec.y/vec.x));
-//         if(vec.x<0){ctx.rotate(Math.PI); }
-//         ctx.drawImage(imageArrow, -10, -10, 20, 20);
-//         ctx.restore();
-        
-//         // Arc value
-//         ctx.save();
-//         ctx.translate(Math.round(-vec.x/2), Math.round(-vec.y/2));
-//         var value = due.value.toString() + unit;
-//         var xText = -10 * value.length/4;
-//         var yText = 20;
-//         ctx.fillStyle = "#000000";
-//         ctx.fillText(value, xText, yText);
-//         ctx.restore();    
-    
-//         due.node.draw_node();
-//     };
+    this.keys = function() {
+        return Object.keys(this.content);
+    }
+    this.get = function(name) {
+        return this.content[name];
+    }
 
-//     this.draw_arcs = function(){
-//         for(i in this.bills){
-//             this.draw_arc(i);
-//         }
-//     }
-// }
+    this.set = function(name, obj) {
+        this.content[name] = obj;
+    }
+
+    this.add = function(node) {
+        // Check if node exists
+        if (Object.keys(this.content).indexOf(node.getName()) == -1) {
+            this.content[node.getName()] = node;
+            // Add in selectors UI
+            var addarcoption1 = document.createElement("option");
+            var addarcoption2 = document.createElement("option");
+            var editoption = document.createElement("option");
+            var deloption = document.createElement("option");
+            var delarcoption1 = document.createElement("option");
+            var delarcoption2 = document.createElement("option");
+            addarcoption1.text = node.getName();
+            addarcoption2.text = node.getName();
+            editoption.text = node.getName();
+            deloption.text = node.getName();
+            delarcoption1.text = node.getName();
+            delarcoption2.text = node.getName();
+            document.getElementById("addrelselec1").add(addarcoption1);
+            document.getElementById("addrelselec2").add(addarcoption2);
+            document.getElementById("editselec").add(editoption);
+            document.getElementById("delselec").add(deloption);
+            document.getElementById("delarcselec1").add(delarcoption1);
+            document.getElementById("delarcselec2").add(delarcoption2);
+            // Bills selectors
+            if (node.isbill) {
+                var divreloption1 = document.createElement("option");
+                divreloption1.text = node.getName();
+                document.getElementById("divrelselec1").add(divreloption1);
+            }
+            else {
+                var divreloption2 = document.createElement("option");
+                divreloption2.text = node.getName();
+                document.getElementById("divrelselec2").add(divreloption2);
+            }
+            reset_selector("addrelselec1");
+            reset_selector("addrelselec2");
+            reset_selector("divrelselec1");
+            reset_selector("divrelselec2");
+            reset_selector("editselec");
+            reset_selector("delselec");
+            reset_selector("delarcselec1");
+            reset_selector("delarcselec2");
+            console.log("Node \"", node.getName(), "\" created");
+            return true;
+        }
+        else {
+            console.log("Error, node \"", node.getName(), "\" exists");
+            return false;
+        }
+    }
+    
+    this.edit = function(name, value) {
+        var node = this.content[name];
+        var list = arcs.get_from_node(name);
+        console.log("edit Number(value): " + Number(value));
+        if (isNaN(Number(value))) {
+            return false;
+        }
+        else {
+            value = Utils.round_value(Number(value));
+        }
+        node.setWallet(value);
+        for (i in list) {
+            if (name == list[i].nameA) {
+                node.wallet = Utils.round_value(node.wallet - list[i].value);
+            }
+            else {
+                if (name == list[i].nameB) {
+                    node.wallet = Utils.round_value(node.wallet + list[i].value);
+                }
+            }
+        }
+        return true;
+    }
+
+    this.delete = function(name) {
+        // var index;
+        for (nameB in this.content) {
+            if (name != nameB) {
+                arcs.delete(Utils.gen_arc_key(name, nameB));
+            }
+        }
+        if (nodes.get(name).isbill) {
+            del_opt("divrelselec1", name);
+            reset_selector("divrelselec1");
+        }
+        else {
+            del_opt("divrelselec2", name);
+            reset_selector("divrelselec2");
+        }
+        delete this.content[name];
+        del_opt("addrelselec1", name);
+        del_opt("addrelselec2", name);
+        del_opt("editselec", name);
+        del_opt("delselec", name);
+        del_opt("delarcselec1", name);
+        del_opt("delarcselec2", name);
+        reset_selector("addrelselec1");
+        reset_selector("addrelselec2");
+        reset_selector("editselec");
+        reset_selector("delselec");
+        reset_selector("delarcselec1");
+        reset_selector("delarcselec2");
+    }
+
+    this.delete_all = function() {
+        for (name in this.content) {
+            this.delete(name);
+        }
+    }
+}
 
 function calc_pos(i, n){
     var x = 0;

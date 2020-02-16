@@ -1,4 +1,5 @@
-
+import Utils from "../Utils.js"
+import {nodes,arcs,ctx} from "../graph.js"
 export default class NodeCollection {
     constructor() {
         this.content = {};
@@ -78,16 +79,16 @@ export default class NodeCollection {
             return false;
         }
         else {
-            value = round_value(Number(value));
+            value = Utils.round_value(Number(value));
         }
         node.setWallet(value);
         for (i in list) {
             if (name == list[i].nameA) {
-                node.wallet = round_value(node.wallet - list[i].value);
+                node.wallet = Utils.round_value(node.wallet - list[i].value);
             }
             else {
                 if (name == list[i].nameB) {
-                    node.wallet = round_value(node.wallet + list[i].value);
+                    node.wallet = Utils.round_value(node.wallet + list[i].value);
                 }
             }
         }
@@ -98,7 +99,7 @@ export default class NodeCollection {
         // var index;
         for (nameB in this.content) {
             if (name != nameB) {
-                arcs.delete(gen_arc_key(name, nameB));
+                arcs.delete(Utils.gen_arc_key(name, nameB));
             }
         }
         if (nodes.get(name).isbill) {

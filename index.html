@@ -19,8 +19,8 @@
     <!--Language Script-->
     <script src="language.js"></script>
 
-    <div id="alert" class="alert hidden" onclick="alert_onclick()">
-        <a href="#" class="close" onclick="alert_onclick()" aria-label="close">&times;</a>
+    <div id="alert" class="alert hidden">
+        <a href="#" class="close" aria-label="close">&times;</a>
         <div>Success! Indicates a successful or positive action</div>
     </div>
 
@@ -29,7 +29,7 @@
         <button type="button" class="btn btn-default btn-lg icon" data-toggle="modal" data-target="#menu">
             <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
         </button>
-        <button type="button" style="right: 0px" class="btn btn-default btn-lg icon" onclick="share_onclick()" data-toggle="modal">
+        <button type="button" style="right: 0px" class="btn btn-default btn-lg icon" data-toggle="modal">
             <span class="glyphicon glyphicon glyphicon-share" aria-hidden="true"></span>
         </button>
     </div>
@@ -74,17 +74,17 @@
                 </div>
                 <div class="modal-body">
                     <button id="button-addnode" class="btn btn-primary btn-block" >Add Node</button>
-                    <button id="button-editnode" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-editnode')">Edit Node</button>
-                    <button id="button-rennode" class="btn btn-primary btn-block disabled" onclick="">Rename Node</button>
-                    <button id="button-delnode" class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-delnode')">Delete Node</button>
+                    <button id="button-editnode" class="btn btn-primary btn-block">Edit Node</button>
+                    <button id="button-rennode" class="btn btn-primary btn-block disabled">Rename Node</button>
+                    <button id="button-delnode" class="btn btn-danger btn-block">Delete Node</button>
                     <br />
-                    <button id="button-update" class="btn btn-warning btn-block" onclick="update_onclick()" data-dismiss="modal"> Update Graph</button>
-                    <button id="button-clear" class="btn btn-warning btn-block" onclick="clear_onclick()" data-dismiss="modal"> Clear Graph</button>
+                    <button id="button-update" class="btn btn-warning btn-block" data-dismiss="modal"> Update Graph</button>
+                    <button id="button-clear" class="btn btn-warning btn-block" data-dismiss="modal"> Clear Graph</button>
                     <br />
-                    <button id="button-addrel" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-addrel')">Add Relation</button>
-                    <button id="button-divrel" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-divrel')">Divide Bill</button>
-                    <button id="button-delrel" class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-delrel')">Delete Relation</button>
-                    <button id="button-reset" class="btn btn-danger btn-block" onclick="resRel_onclick()" data-dismiss="modal">Reset Relations</button>
+                    <button id="button-addrel" class="btn btn-primary btn-block">Add Relation</button>
+                    <button id="button-divrel" class="btn btn-primary btn-block">Divide Bill</button>
+                    <button id="button-delrel" class="btn btn-danger btn-block">Delete Relation</button>
+                    <button id="button-reset" class="btn btn-danger btn-block" data-dismiss="modal">Reset Relations</button>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -130,7 +130,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" >Ok</button>
-                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-addnode','menu')">Close</button>
+                    <button type="button" class="btn btn-default">Close</button>
                 </div>
             </div>
             
@@ -162,8 +162,8 @@
                     </center>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="editNode_onclick()" >Ok</button>
-                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-editnode','menu')">Close</button>
+                    <button type="button" class="btn btn-success">Ok</button>
+                    <button type="button" class="btn btn-default">Close</button>
                 </div>
             </div>
             
@@ -195,8 +195,8 @@
                     </center> 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="deleteNode_onclick()" data-dismiss="modal">Ok</button>
-                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-delnode','menu')">Close</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
+                    <button type="button" class="btn btn-default">Close</button>
                 </div>
             </div>
             
@@ -232,8 +232,8 @@
                     </center> 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="addRel_onclick()">Ok</button>
-                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-addrel','menu')">Close</button>
+                    <button type="button" class="btn btn-success">Ok</button>
+                    <button type="button" class="btn btn-default">Close</button>
                 </div>
             </div>
             
@@ -265,8 +265,8 @@
                     </center> 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="divRel_onclick()" data-dismiss="modal">Ok</button>
-                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-divrel','menu')">Close</button>
+                    <button type="button" class="btn btn-success">Ok</button>
+                    <button type="button" class="btn btn-default">Close</button>
                 </div>
             </div>
             
@@ -298,16 +298,17 @@
                     </center>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="delRel_onclick()" data-dismiss="modal">Ok</button>
-                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-delrel','menu')">Close</button>
+                    <button type="button" class="btn btn-success">Ok</button>
+                    <button type="button" class="btn btn-default">Close</button>
                 </div>
             </div>
             
         </div>
     </div>
     <script type="module">
+        import {nodes,arcs,ctx} from "../graph.js"
         import Node from "./entities/Node.js";
-        import NodeCollection from "./entities/NodeCollection.js";
+        //import NodeCollection from "./entities/NodeCollection.js";
         $("#graph")[0].width = $(window)[0].innerWidth;
         $("#graph")[0].height = $(window)[0].innerHeight;
         var imageNode;
@@ -578,8 +579,39 @@
             arcs.delete_all();
             update_graph();
         }
+
         document.getElementById("button-addnode").addEventListener("click", ()=>modalTransition('menu','menu-addnode'));
-        document.querySelectorAll("#menu-addnode button")[1].addEventListener("click", ()=>addNode_onclick());
+        document.querySelector("#menu-addnode .btn-success").addEventListener("click", ()=>addNode_onclick());
+        document.getElementById("alert").addEventListener("click",()=>alert_onclick());
+        document.querySelector("#alert a").addEventListener("click",()=>alert_onclick());
+        document.querySelectorAll(".btn-lg")[1].addEventListener("click",()=>share_onclick());
+        document.getElementById("button-editnode").addEventListener("click",()=>modalTransition('menu','menu-editnode'));
+        document.getElementById("button-rennode").addEventListener("click",()=>"");
+        document.getElementById("button-delnode").addEventListener("click",()=>modalTransition('menu','menu-delnode'));
+        document.getElementById("button-update").addEventListener("click",()=>update_onclick());
+        document.getElementById("button-clear").addEventListener("click",()=>clear_onclick());
+        document.getElementById("button-addrel").addEventListener("click",()=>modalTransition('menu','menu-addrel'));
+        document.getElementById("button-divrel").addEventListener("click",()=>modalTransition('menu','menu-divrel'));
+        document.getElementById("button-delrel").addEventListener("click",()=>modalTransition('menu','menu-delrel'));
+        document.getElementById("button-reset").addEventListener("click",()=>resRel_onclick());
+        document.querySelector("#menu-addnode .btn-default").addEventListener("click",()=>modalTransition('menu-addnode','menu'));
+        document.querySelector("#menu-editnode .btn-success").addEventListener("click",()=>editNode_onclick());
+        document.querySelector("#menu-editnode .btn-default").addEventListener("click",()=>modalTransition('menu-editnode','menu'));
+        document.querySelector("#menu-delnode .btn-success").addEventListener("click",()=>deleteNode_onclick());
+        document.querySelector("#menu-delnode .btn-default").addEventListener("click",()=>modalTransition('menu-delnode','menu'));
+        document.querySelector("#menu-addrel .btn-success").addEventListener("click",()=>addRel_onclick());
+        document.querySelector("#menu-addrel .btn-default").addEventListener("click",()=>modalTransition('menu-addrel','menu'));
+        document.querySelector("#menu-divrel .btn-success").addEventListener("click",()=>divRel_onclick());
+        document.querySelector("#menu-divrel .btn-default").addEventListener("click",()=>modalTransition('menu-divrel','menu'));
+        document.querySelector("#menu-delrel .btn-success").addEventListener("click",()=>delRel_onclick());
+        document.querySelector("#menu-delrel .btn-default").addEventListener("click",()=>modalTransition('menu-delrel','menu'));
+        
+        /*
+        document.getElementById("").addEventListener("click",()=>);
+        document.querySelector("").addEventListener("click",()=>);
+        document.querySelectorAll("")[].addEventListener("click",()=>);
+        */
+
     </script>
     <script src = "./graph.js" type="module"></script>
 </body>
