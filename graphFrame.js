@@ -1,13 +1,16 @@
 
+import {Node} from "./entities/Node.js";
+import {NodeCollection} from "./entities/NodeCollection.js";
+
 $("#graph")[0].width = $(window)[0].innerWidth;
 $("#graph")[0].height = $(window)[0].innerHeight;
 var imageNode;
 var imageBill;
 var imageArrow;
 window.onload = function() {
-	loadedNode = false;
-	loadedArrow = false;
-	loadedBill = false;
+	var loadedNode = false;
+	var loadedArrow = false;
+	var loadedBill = false;
 
 	imageNode = new Image();
 	imageNode.src = "./images/node.PNG";
@@ -50,7 +53,7 @@ window.onload = function() {
 	};
 };
 
-function modalTransition(id1, id2){
+export function modalTransition(id1, id2){
 	$("#"+id1).modal("hide");
 	$("#"+id2).modal("show");
 }
