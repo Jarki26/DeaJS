@@ -1,18 +1,23 @@
 body {
-    overflow:hidden;
+    overflow: hidden;
 }
-/* input {
-    width: 75px;
-} */
-.alert{
+
+@font-face {
+    font-family: 'Glyphicons Halflings';
+    src: url(https://github.com/Jarki26/DeaJS/blob/d6a19d814975e4368bc231d034d76a1bc4833701/fonts/glyphicons-halflings-regular.woff2);
+}
+
+.alert {
     margin-bottom: 0px;
 }
+
 canvas {
     width: -moz-available;
     width: -webkit-fill-available;
     height: -moz-available;
     height: -webkit-fill-available;
 }
+
 div.box {
     border-style: solid;
     border-width: 1px;
@@ -20,6 +25,8 @@ div.box {
     border-radius: 10px;
     padding: 5px;
 }
-th, td {
+
+th,
+td {
     padding: 7px;
 }
