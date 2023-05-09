@@ -166,6 +166,10 @@ function reset_selector(id){
 	document.getElementById(id).selectedIndex = -1;
 }
 
+function delete_children(id){
+	document.getElementById(id).innerHTML='';
+}
+
 // Alert text
 function alert_text(alertClass, text){
 	// return null;
@@ -259,6 +263,85 @@ function addRel_onclick(){
 	update_graph();
 	alert_text("alert-success", language.alert_addrel_succ.replace("%s1", nameA).replace("%s2", nameB).replace("%s3", value));
 }
+function divrelrange_onchange(){
+	delete_children('divrelranges');
+	var rangeCont = document.getElementById('divrelranges');
+	if(document.getElementById('divrelselec2').selectedIndex == -1){
+		return null;
+	}
+	var nodesL = document.getElementById('divrelselec2').selectedOptions;
+	var value = ceil_value(100/nodesL.length);
+	for(var i = 0; i<nodesL.length; i++){
+		var nameB = nodesL[i].textContent;
+		var range = document.createElement("input");
+		range.setAttribute("type", "range");
+		range.setAttribute("id", "divrel_"+nameB+"_range");
+		range.setAttribute("name", nameB);
+		range.setAttribute("min", 1);
+		range.setAttribute("max", 101-nodesL.length);
+		range.onchange = function(event){
+			var range = event.target;
+			var name = range.attributes["name"].value;
+			var label = document.getElementById("divrel_"+name+"_label");
+			label.textContent = name+": "+range.value+"%";
+			
+			var rangeL = document.querySelectorAll('#divrelranges input');
+			var suma = divrelranges_suma() - Number(range.value);
+			var dueLeft = 100 - Number(range.value);
+			console.log('dueLeft: '+dueLeft);
+			console.log('Suma: '+suma);
+
+			if(suma==0){
+				return;
+			}
+			console.log('recorre lista: ');
+			console.log(rangeL);
+			for(var range of rangeL){
+				console.log('range: '+range.attributes['name'].value);
+				if(range.attributes['name'].value==name){
+					console.log('no se toca');
+					continue;
+				}
+				console.log('Number(range.value)/suma: '+(Number(range.value)/suma));
+				var valueUpdated = (Number(range.value)/suma) * dueLeft;
+				console.log('valueUpdated: '+valueUpdated);
+				divrelranges_update(range, valueUpdated);
+			}
+		};
+		range.value = value;
+		var txtrangeValue = document.createElement("p");
+		txtrangeValue.setAttribute("id", "divrel_"+nameB+"_label");
+		txtrangeValue.textContent = nameB+": "+range.value+"%";
+
+		rangeCont.append(range);
+		rangeCont.append(txtrangeValue);
+		/*
+		console.log("nameB:",nameB);
+		console.log("i:",i);
+		console.log("value:",value);
+		console.log("arc:",arc);
+		*/
+	}
+}
+
+function divrelranges_update(range, value){
+	if(value != null){
+		range.value = value;
+	}
+	var name = range.attributes["name"].value;
+	var label = document.getElementById("divrel_"+name+"_label");
+	label.textContent = name+": "+range.value+"%";
+}
+
+function divrelranges_suma(){
+	var sum = 0;
+	var rangeL = document.querySelectorAll('#divrelranges input');
+	for(var range of rangeL){
+		sum += Number(range.value);
+	}
+	return sum;
+}
+
 function divRel_onclick(){
 	if(document.getElementById('divrelselec1').selectedIndex == -1){
 		return null;
@@ -269,12 +352,20 @@ function divRel_onclick(){
 	var nameBill = document.getElementById('divrelselec1').value;
 	var bill = nodes.get(nameBill);
 	var nodesL = document.getElementById('divrelselec2').selectedOptions;
-	var value = ceil_value(-bill.getWallet()/nodesL.length);
+	//var value = ceil_value(-bill.getWallet()/nodesL.length);
 	console.log("namebill:",nameBill);
 	console.log("bill:",bill);
 	console.log("nodes:",nodesL);
+	var suma = divrelranges_suma();
+	var dueBill = -bill.getWallet();
 	for(var i = 0; i<nodesL.length; i++){
 		var nameB = nodesL[i].textContent;
+		var valueB = Number(document.getElementById("divrel_"+nameB+"_range").value);
+		console.log("nameB: "+nameB);
+		console.log("valueB: "+valueB);
+		console.log("suma: "+suma);
+		console.log("ceil_value(valueB/suma): "+ceil_value(valueB/suma));
+		var value = ceil_value(dueBill * ceil_value(valueB/suma));
 		var arc = new Arc(nameB, nameBill, value);
 		arcs.add(arc);
 		console.log("nameB:",nameB);
@@ -285,6 +376,7 @@ function divRel_onclick(){
 	update_graph();
 	reset_selector('divrelselec1');
 	reset_selector('divrelselec2');
+	delete_children('divrelranges');
 }
 function delRel_onclick(){
 	var nameA = document.getElementById('delarcselec1').value;

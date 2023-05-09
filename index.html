@@ -267,14 +267,21 @@
                             </tr>
                             <tr>
                                 <td><label>Users: </label></td>
-                                <td><select id="divrelselec2" multiple></select></td>
+                                <td><select id="divrelselec2" multiple onchange="divrelrange_onchange()" ></select></td>
+                            </tr>
+                            <tr>
+                                <td><div id="divrelranges"></div></td>
                             </tr>
                         </table>
                     </center> 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" onclick="divRel_onclick()" data-dismiss="modal">Ok</button>
-                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-divrel','menu')">Close</button>
+                    <button type="button" class="btn btn-default" 
+                        onclick="modalTransition('menu-divrel','menu');
+                            reset_selector('divrelselec1');
+                            reset_selector('divrelselec2');
+                            delete_children('divrelranges');">Close</button>
                 </div>
             </div>
             
