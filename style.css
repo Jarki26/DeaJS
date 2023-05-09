@@ -2,11 +2,6 @@ body {
     overflow: hidden;
 }
 
-@font-face {
-    font-family: 'Glyphicons Halflings';
-    src: url(https://github.com/Jarki26/DeaJS/blob/d6a19d814975e4368bc231d034d76a1bc4833701/fonts/glyphicons-halflings-regular.woff2);
-}
-
 .alert {
     margin-bottom: 0px;
 }
