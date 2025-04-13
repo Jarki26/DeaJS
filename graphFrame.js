@@ -263,6 +263,54 @@ function addRel_onclick() {
 	update_graph();
 	alert_text("alert-success", language.alert_addrel_succ.replace("%s1", nameA).replace("%s2", nameB).replace("%s3", value));
 }
+function splitrel_onclick() {
+	/*
+	leer keyAB de splitrelselec1
+		si es null, return null
+	leer nameC de splitrelselec2
+		si es null, return null
+	crear arc con nameA, nameC, valueAB
+		si es null, return error new arc
+	crear arc con nameC, nameB, valueAB
+		si es null, return error new arc
+	eliminar arc keyAB
+		si es null, return error delete arc
+
+	*/
+	var keyAB = document.getElementById('splitrelselec1').value;
+	var nameC = document.getElementById('splitrelselec2').value;
+	var arcAB = arcs.get(keyAB);
+	if (arcAB == null) {
+		//TODO: alert
+		// alert_text("alert-danger", language.alert_splitrel_fail1);
+		return null;
+	}
+	var nodeC = nodes.get(nameC);
+	if (nodeC == null) {
+		//TODO: alert
+		return null;
+	}
+	var arcAC = new Arc(arcAB.nameA, nameC, arcAB.value);
+	if(arcAC == null || arcAB.nameA == nameC) {
+		//TODO: alert
+		// alert_text("alert-danger", language.alert_splitrel_fail2);
+		return null;
+	}
+	var arcCB = new Arc(nameC, arcAB.nameB, arcAB.value);
+	if(arcCB == null || arcAB.nameB == nameC) {
+		//TODO: alert
+		// alert_text("alert-danger", language.alert_splitrel_fail3);
+		return null;
+	}
+	arcs.add(arcAC);
+	arcs.add(arcCB);
+	arcs.delete(keyAB);
+
+	reset_selector('splitrelselec1');
+	reset_selector('splitrelselec2');
+	update_graph();
+	// alert_text("alert-success", language.alert_addrel_succ.replace("%s1", nameA).replace("%s2", nameB).replace("%s3", value));
+}
 function divrelrange_onchange() {
 	delete_children('divrelranges');
 	var rangeCont = document.getElementById('divrelranges');

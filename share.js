@@ -79,6 +79,6 @@ function loadArcs(list){
         // var nodeB = nodes.get(list[i].nodeB.name);
         var arc = new Arc(list[i].nameA, list[i].nameB, list[i].value);
         console.log(arc);
-        arcs.content[arc.key] = arc;
+        arcs.add(arc, true);
     }
 }

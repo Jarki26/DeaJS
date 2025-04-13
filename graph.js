@@ -86,18 +86,21 @@ function NodeCollection() {
             var deloption = document.createElement("option");
             var delarcoption1 = document.createElement("option");
             var delarcoption2 = document.createElement("option");
+            var splitreloption2 = document.createElement("option");
             addarcoption1.text = node.getName();
             addarcoption2.text = node.getName();
             editoption.text = node.getName();
             deloption.text = node.getName();
             delarcoption1.text = node.getName();
             delarcoption2.text = node.getName();
+            splitreloption2.text = node.getName();
             document.getElementById("addrelselec1").add(addarcoption1);
             document.getElementById("addrelselec2").add(addarcoption2);
             document.getElementById("editselec").add(editoption);
             document.getElementById("delselec").add(deloption);
             document.getElementById("delarcselec1").add(delarcoption1);
             document.getElementById("delarcselec2").add(delarcoption2);
+            document.getElementById("splitrelselec2").add(splitreloption2);
 
             // Bills selectors
             if (node.isbill) {
@@ -118,6 +121,7 @@ function NodeCollection() {
             reset_selector("delselec");
             reset_selector("delarcselec1");
             reset_selector("delarcselec2");
+            reset_selector("splitrelselec2");
 
             console.log("Node \"", node.getName(), "\" created");
             return true;
@@ -172,6 +176,7 @@ function NodeCollection() {
         del_opt("delselec", name);
         del_opt("delarcselec1", name);
         del_opt("delarcselec2", name);
+        del_opt("splitrelselec2", name);
 
         reset_selector("addrelselec1");
         reset_selector("addrelselec2");
@@ -179,6 +184,7 @@ function NodeCollection() {
         reset_selector("delselec");
         reset_selector("delarcselec1");
         reset_selector("delarcselec2");
+        reset_selector("splitrelselec2");
     };
 
     this.delete_all = function () {
@@ -217,98 +223,6 @@ function Bill(name = "", wallet = 0, x = 0, y = 0) {
     };
     return node;
 }
-
-// function BillCollection(value=0){
-//     if(Number(value)==NaN){
-//         this.value = 0;
-//     } else{
-//         this.value = round_value(Number(value));
-//     }
-//     this.bills = {};
-
-//     this.add = function(node, value){
-//         var due = {};
-//         if(Number(value)==NaN){
-//             value = 0;
-//         } else{
-//             value = round_value(Number(value));
-//         }
-//         due.node = node;
-//         due.value = value;
-//         this.bills[node.name] = due;
-//         this.value -= value;
-//         node.wallet -= value;
-//     };
-
-//     this.delete = function(name){
-//         if(this.bills[name] == undefined){
-//             return null;
-//         }
-//         var due = this.bills[name];
-//         this.value += due.value;
-//         due.node.wallet += due.value;
-//     }
-
-//     this.draw_node = function(){
-//         if(this.value == undefined){
-//             return null;
-//         }
-//         var xText = -140*nodes.length()/Math.PI;
-//         var yText = -140*nodes.length()/Math.PI;
-
-//         ctx.drawImage(imageBill, xText-NODE_R, yText-NODE_R, NODE_R*2, NODE_R*2);
-
-//         // Bill value
-//         ctx.fillStyle = "#000000";
-//         var value = this.value.toString() + unit;
-//         xText += - 10 * value.length/4;
-//         ctx.fillText(value, xText, yText+12);
-//     };
-
-//     this.draw_arc = function(name){
-//         if(this.bills[name] == undefined){
-//             return null;
-//         }
-//         var due = this.bills[name];
-//         // Draw line        
-//         ctx.strokeStyle = "#777777";
-//         ctx.beginPath();
-//         ctx.moveTo(0, 0);
-//         ctx.lineTo(due.node.x, due.node.y);
-//         ctx.stroke();
-
-//         var vec = {};
-//         vec.x = -due.node.x;
-//         vec.y = -due.node.y;
-//         round_vec(vec);
-
-//         // Draw triangle
-//         ctx.save();
-//         ctx.translate(Math.round(-vec.x/2), Math.round(-vec.y/2));
-//         ctx.rotate(Math.atan(vec.y/vec.x));
-//         if(vec.x<0){ctx.rotate(Math.PI); }
-//         ctx.drawImage(imageArrow, -10, -10, 20, 20);
-//         ctx.restore();
-
-//         // Arc value
-//         ctx.save();
-//         ctx.translate(Math.round(-vec.x/2), Math.round(-vec.y/2));
-//         var value = due.value.toString() + unit;
-//         var xText = -10 * value.length/4;
-//         var yText = 20;
-//         ctx.fillStyle = "#000000";
-//         ctx.fillText(value, xText, yText);
-//         ctx.restore();    
-
-//         due.node.draw_node();
-//     };
-
-//     this.draw_arcs = function(){
-//         for(i in this.bills){
-//             this.draw_arc(i);
-//         }
-//     }
-// }
 
 function calc_pos(i, n) {
     var x = 0;
@@ -386,6 +300,9 @@ function Arc(nameA, nameB, value) {
             }
         } else {
             console.error("ERROR key " + result.key + " y " + arc.key + " no coinciden");
+        }
+        if(round_value(result.getValue) == 0){
+            return undefined;
         }
         return result
     }
@@ -474,7 +391,7 @@ function ArcsCollection() {
     this.get = function (name) { return this.content[name] };
     this.set = function (name, obj) { this.content[name] = obj; };
 
-    this.add = function (arc) {
+    this.add = function (arc, is_load = false) {
         if (arc.getNameA() == arc.getNameB()) {
             return null;
         }
@@ -483,17 +400,29 @@ function ArcsCollection() {
             var current = this.content[key].clone();
             this.delete(key);
             this.content[key] = current.sum(arc);
-            var nodeA = nodes.get(current.getNameA());
-            var nodeB = nodes.get(current.getNameB());
-            nodeA.wallet = round_value(nodeA.getWallet() - this.content[key].value);
-            nodeB.wallet = round_value(nodeB.getWallet() + this.content[key].value);
+            if(!is_load) {
+                var nodeA = nodes.get(this.content[key].getNameA());
+                var nodeB = nodes.get(this.content[key].getNameB());
+                nodeA.wallet = round_value(nodeA.getWallet() - this.content[key].value);
+                nodeB.wallet = round_value(nodeB.getWallet() + this.content[key].value);
+            }
         } else {
-            var nodeA = nodes.get(arc.getNameA());
-            var nodeB = nodes.get(arc.getNameB());
             this.content[key] = arc;
-            nodeA.wallet = round_value(nodeA.getWallet() - arc.value);
-            nodeB.wallet = round_value(nodeB.getWallet() + arc.value);
+            if(!is_load) {
+                var nodeA = nodes.get(arc.getNameA());
+                var nodeB = nodes.get(arc.getNameB());
+                nodeA.wallet = round_value(nodeA.getWallet() - arc.value);
+                nodeB.wallet = round_value(nodeB.getWallet() + arc.value);
+            }
         }
+
+        // Add in selectors UI
+        console.log("added to arc:", arc);
+        var splitreloption1 = document.createElement("option");
+        splitreloption1.text = key;
+        document.getElementById("splitrelselec1").add(splitreloption1);
+
+        reset_selector("splitrelselec1");
     }
 
     this.delete = function (key) {
@@ -504,6 +433,9 @@ function ArcsCollection() {
             nodeA.wallet = round_value(nodeA.getWallet() + arc.getValue());
             nodeB.wallet = round_value(nodeB.getWallet() - arc.getValue());
             delete this.content[key];
+
+            del_opt("splitrelselec1", key);
+            reset_selector("splitrelselec1");
         }
     }
 

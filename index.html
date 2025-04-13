@@ -82,6 +82,7 @@
                     <button id="button-clear" class="btn btn-warning btn-block" onclick="clear_onclick()" data-dismiss="modal"> Clear Graph</button>
                     <br />
                     <button id="button-addrel" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-addrel')">Add Relation</button>
+                    <button id="button-splitrel" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-splitrel')">Split Relation</button>
                     <button id="button-divrel" class="btn btn-primary btn-block" onclick="modalTransition('menu','menu-divrel')">Divide Bill</button>
                     <button id="button-delrel" class="btn btn-danger btn-block" onclick="modalTransition('menu','menu-delrel')">Delete Relation</button>
                     <button id="button-reset" class="btn btn-danger btn-block" onclick="resRel_onclick()" data-dismiss="modal">Reset Relations</button>
@@ -242,6 +243,39 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" onclick="addRel_onclick()">Ok</button>
                     <button type="button" class="btn btn-default" onclick="modalTransition('menu-addrel','menu')">Close</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Modal splitrel -->
+    <div id="menu-splitrel" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Split Relation</h4>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <table>
+                            <tr>
+                                <td><label>Relation: </label></td>
+                                <td><select id="splitrelselec1"></select></td>
+                            </tr>
+                            <tr>
+                                <td><label>To: </label></td>
+                                <td><select id="splitrelselec2"></select></td>
+                            </tr>
+                        </table>
+                    </center> 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="splitrel_onclick()">Ok</button>
+                    <button type="button" class="btn btn-default" onclick="modalTransition('menu-splitrel','menu')">Close</button>
                 </div>
             </div>
             
