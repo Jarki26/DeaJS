@@ -80,37 +80,18 @@ function NodeCollection() {
             this.content[node.getName()] = node;
 
             // Add in selectors UI
-            var addarcoption1 = document.createElement("option");
-            var addarcoption2 = document.createElement("option");
-            var editoption = document.createElement("option");
-            var deloption = document.createElement("option");
-            var delarcoption1 = document.createElement("option");
-            var delarcoption2 = document.createElement("option");
-            var splitreloption2 = document.createElement("option");
-            addarcoption1.text = node.getName();
-            addarcoption2.text = node.getName();
-            editoption.text = node.getName();
-            deloption.text = node.getName();
-            delarcoption1.text = node.getName();
-            delarcoption2.text = node.getName();
-            splitreloption2.text = node.getName();
-            document.getElementById("addrelselec1").add(addarcoption1);
-            document.getElementById("addrelselec2").add(addarcoption2);
-            document.getElementById("editselec").add(editoption);
-            document.getElementById("delselec").add(deloption);
-            document.getElementById("delarcselec1").add(delarcoption1);
-            document.getElementById("delarcselec2").add(delarcoption2);
-            document.getElementById("splitrelselec2").add(splitreloption2);
-
+            add_opt("addrelselec1", node.getName());
+            add_opt("addrelselec2", node.getName());
+            add_opt("editselec", node.getName());
+            add_opt("delselec", node.getName());
+            add_opt("delarcselec2", node.getName());
+            add_opt("splitrelselec2", node.getName());
+            
             // Bills selectors
             if (node.isbill) {
-                var divreloption1 = document.createElement("option");
-                divreloption1.text = node.getName();
-                document.getElementById("divrelselec1").add(divreloption1);
+                add_opt("divrelselec1", node.getName());
             } else {
-                var divreloption2 = document.createElement("option");
-                divreloption2.text = node.getName();
-                document.getElementById("divrelselec2").add(divreloption2);
+                add_opt("divrelselec2", node.getName());
             }
 
             reset_selector("addrelselec1");
@@ -458,6 +439,12 @@ function ArcsCollection() {
         }
         return list;
     }
+}
+
+function add_opt(elementId, name) {
+    var optionElement = document.createElement("option");
+    optionElement.text = name;
+    document.getElementById(elementId).add(optionElement);
 }
 
 function del_opt(idSelec, name) {
